@@ -1,0 +1,51 @@
+# Google OAuth — NEVER commit these
+credentials.json
+token.json
+client_secret*.json
+
+# Local secrets / env
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+rent-calc
+*.exe
+*.claude
+
+.omc
+
+*.tmp
+tmp
+*.out
+/dist/
+/build/
+
+# Generated invoices
+rent-invoices/
+*.png
+!docs/**/*.png
+
+# Config (may contain private sheet URL)
+config.json
+
+# Go
+*.test
+*.prof
+coverage.out
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~
+
+# Logs
+*.log
+
+# AI agent docs
+AGENTS.md
+
+# Node
+node_modules/
