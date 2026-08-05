@@ -9,8 +9,8 @@
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     const grad = ctx.createLinearGradient(0, 0, 0, 130)
-    grad.addColorStop(0, 'rgba(99,102,241,0.34)')
-    grad.addColorStop(1, 'rgba(99,102,241,0)')
+    grad.addColorStop(0, 'rgba(16,185,129,0.34)')
+    grad.addColorStop(1, 'rgba(16,185,129,0)')
 
     const chart = new Chart(ctx, {
       type: 'line',
@@ -18,14 +18,14 @@
         labels: [...labels],
         datasets: [{
           data: [...values],
-          borderColor: '#6366f1',
+          borderColor: '#10b981',
           backgroundColor: grad,
           fill: true,
           tension: 0.38,
           borderWidth: 2.5,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#6366f1',
+          pointHoverBackgroundColor: '#10b981',
           pointHoverBorderColor: '#fff',
           pointHoverBorderWidth: 2,
         }],

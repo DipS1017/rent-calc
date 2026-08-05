@@ -43,7 +43,6 @@
         <div class="invoice" bind:this={node}>
           <div class="inv-head">
             <div>
-              <div class="inv-brand">Kirayaa</div>
               <div class="inv-title">INVOICE</div>
               <div class="inv-sub">Rent · Utilities · Electricity</div>
             </div>
@@ -79,7 +78,6 @@
             {#if inv.note}<div class="inv-note">Note: {inv.note}</div>{/if}
 
             <div class="inv-foot">
-              <div class="inv-foot-brand">Kirayaa</div>
               <div class="inv-foot-note">Thank you for being a valued tenant.</div>
             </div>
           </div>
@@ -101,7 +99,7 @@
     margin: 0 auto;
     background: #ffffff;
     color: #1e293b;
-    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'IBM Plex Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.5;
   }
@@ -112,14 +110,14 @@
     background: #1a2230;
     color: #ffffff;
     padding: 28px 36px;
-    border-bottom: 4px solid #4f46e5;
+    border-bottom: 4px solid #059669;
   }
   .inv-brand {
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #93b2f4;
+    color: #6ee7b7;
   }
   .inv-title {
     font-size: 34px;
@@ -129,7 +127,7 @@
   }
   .inv-sub {
     font-size: 12px;
-    color: #93b2f4;
+    color: #6ee7b7;
     margin-top: 6px;
   }
   .inv-date-lbl {
@@ -204,7 +202,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #4f46e5;
+    background: #059669;
     color: #ffffff;
     border-radius: 8px;
     padding: 16px 22px;
@@ -221,8 +219,8 @@
   }
   .inv-note {
     margin-top: 16px;
-    background: #eef2ff;
-    border-left: 4px solid #4f46e5;
+    background: #ecfdf5;
+    border-left: 4px solid #059669;
     border-radius: 0 6px 6px 0;
     padding: 12px 16px;
     font-size: 12.5px;
@@ -230,7 +228,7 @@
   }
   .inv-foot {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-top: 22px;
     padding: 16px 0 24px;
@@ -239,7 +237,7 @@
   .inv-foot-brand {
     font-size: 14px;
     font-weight: 800;
-    color: #4f46e5;
+    color: #059669;
   }
   .inv-foot-note {
     font-size: 11px;

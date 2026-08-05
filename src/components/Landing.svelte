@@ -63,7 +63,7 @@
 
     <!-- product preview -->
     <div class="mx-auto mt-14 max-w-4xl">
-      <div class="card overflow-hidden p-0 text-left shadow-[0_30px_80px_-30px_rgb(79_70_229/0.4)]">
+      <div class="card overflow-hidden p-0 text-left shadow-[0_30px_80px_-30px_rgb(16_185_129/0.4)]">
         <div class="flex items-center gap-1.5 border-b border-slate-200/70 bg-slate-50/70 px-4 py-2.5">
           <span class="h-2.5 w-2.5 rounded-full bg-rose-300"></span>
           <span class="h-2.5 w-2.5 rounded-full bg-amber-300"></span>
@@ -84,7 +84,7 @@
           <div class="col-span-1 rounded-xl bg-white p-3 ring-1 ring-slate-100 sm:col-span-2">
             <div class="text-[10px] font-bold uppercase text-slate-400">Bill trend</div>
             <svg viewBox="0 0 200 44" class="mt-1 h-10 w-full" preserveAspectRatio="none">
-              <polyline points="0,34 33,30 66,22 100,24 133,14 166,18 200,10" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linejoin="round"/>
+              <polyline points="0,34 33,30 66,22 100,24 133,14 166,18 200,10" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round"/>
             </svg>
           </div>
         </div>
@@ -102,7 +102,7 @@
         ['3', 'Send the invoice', 'Open any month as a clean invoice and download it as PNG or PDF for your tenant.'],
       ] as [n, title, body]}
         <div class="card p-6">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl text-base font-black text-white" style="background-image:linear-gradient(135deg,#6366f1,#8b5cf6); box-shadow:var(--shadow-glow)">{n}</div>
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl text-base font-black text-white" style="background-color:#059669; box-shadow:var(--shadow-glow)">{n}</div>
           <h3 class="mt-4 font-bold text-slate-900">{title}</h3>
           <p class="mt-1.5 text-sm leading-relaxed text-slate-500">{body}</p>
         </div>
@@ -157,7 +157,7 @@
 
   <!-- final CTA -->
   <section class="mx-auto max-w-6xl px-5 pb-24">
-    <div class="card overflow-hidden bg-gradient-to-br from-brand-500 to-iris-500 p-10 text-center text-white shadow-[var(--shadow-glow)]">
+    <div class="card overflow-hidden bg-brand-600 p-10 text-center text-white shadow-[var(--shadow-glow)]">
       <h2 class="text-3xl font-black tracking-tight">Ready when you are.</h2>
       <p class="mx-auto mt-2 max-w-md text-white/85">Sign in with Google and pick your sheet — you'll be calculating rent in seconds.</p>
       <div class="mt-6 flex justify-center">
