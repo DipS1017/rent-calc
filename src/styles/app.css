@@ -1,0 +1,152 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────  Kirayaa design system  ─────────────────────────
+   Modern, warm-professional. Indigo→violet brand, emerald/rose deltas, slate
+   neutrals, soft tinted shadows, generous radii. Light theme, dark-ready. */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/inter.woff2') format('woff2');
+}
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* brand = indigo/violet */
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+
+  --color-iris-500: #8b5cf6;
+  --color-iris-600: #7c3aed;
+
+  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 12px rgb(15 23 42 / 0.06);
+  --shadow-glow: 0 8px 30px rgb(99 102 241 / 0.28);
+}
+
+@layer base {
+  html {
+    height: 100%;
+  }
+  body {
+    height: 100%;
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-slate-800);
+    background:
+      radial-gradient(1100px 520px at 100% -8%, var(--color-brand-100), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #ede9fe, transparent 55%),
+      var(--color-slate-50);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizelegibility;
+  }
+  #app {
+    height: 100%;
+  }
+}
+
+/* base button as a real utility so variants can @apply it (Tailwind v4 rule) */
+@utility btn {
+  @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
+         text-sm font-semibold transition active:scale-[.98] disabled:pointer-events-none
+         disabled:opacity-55 focus-visible:outline-none focus-visible:ring-2
+         focus-visible:ring-brand-500/60 focus-visible:ring-offset-2;
+}
+
+@layer components {
+  .brandmark {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-white font-black;
+    background-image: linear-gradient(135deg, var(--color-brand-500), var(--color-iris-500));
+    box-shadow: var(--shadow-glow);
+  }
+  .brand-gradient-text {
+    background-image: linear-gradient(120deg, var(--color-brand-600), var(--color-iris-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .btn-primary {
+    @apply btn text-white shadow-[var(--shadow-glow)];
+    background-image: linear-gradient(135deg, var(--color-brand-500), var(--color-iris-500));
+  }
+  .btn-primary:hover {
+    filter: brightness(1.06);
+  }
+  .btn-ghost {
+    @apply btn border border-slate-200 bg-white/80 text-slate-700 backdrop-blur hover:bg-white hover:border-slate-300;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-[13px] rounded-lg;
+  }
+
+  /* sticky spreadsheet header cell */
+  .th {
+    @apply sticky top-0 z-10 border-b border-slate-200 bg-slate-50/95 px-3 py-2.5
+           text-[11px] font-bold uppercase tracking-wide text-slate-500 backdrop-blur;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-200/70 bg-white/80 shadow-[var(--shadow-soft)] backdrop-blur;
+  }
+
+  /* editable spreadsheet cell */
+  .cell {
+    @apply w-full bg-transparent px-3 py-2 text-[13.5px] text-slate-800 outline-none
+           transition-colors placeholder:text-slate-300;
+  }
+  .cell:focus {
+    @apply bg-brand-50/70 ring-2 ring-inset ring-brand-500/70 rounded-md;
+  }
+  .cell-num {
+    @apply text-right tabular-nums;
+  }
+
+  /* saved pulse on a just-written row */
+  .saved-pulse {
+    animation: savedPulse 0.9s ease-out;
+  }
+  @keyframes savedPulse {
+    0% {
+      background-color: rgb(16 185 129 / 0.16);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .scrollbar-slim {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-slate-300) transparent;
+  }
+  .scrollbar-slim::-webkit-scrollbar {
+    height: 9px;
+    width: 9px;
+  }
+  .scrollbar-slim::-webkit-scrollbar-thumb {
+    background: var(--color-slate-300);
+    border-radius: 9999px;
+  }
+}
+
+/* Google Picker: keep its overlay pinned to the viewport and above everything, so a
+   scrolled page can never hide the "choose your spreadsheet" dialog. */
+.picker-dialog-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2000 !important;
+}
+.picker-dialog {
+  position: fixed !important;
+  z-index: 2001 !important;
+}
