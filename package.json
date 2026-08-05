@@ -24,6 +24,7 @@
     "chart.js": "^4.5.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
-    "melt": "^0.44.0"
+    "melt": "^0.44.0",
+    "nepali-date-converter": "^3.4.0"
   }
 }

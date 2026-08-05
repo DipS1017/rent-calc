@@ -25,7 +25,7 @@
   }
 
   const num = 'cell cell-num'
-  const ro = 'px-3 py-2 text-right tabular-nums align-middle'
+  const ro = 'auto-cell' // read-only, calculated cell
 </script>
 
 <tr

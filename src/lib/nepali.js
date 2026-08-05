@@ -1,3 +1,5 @@
+import NepaliDate from 'nepali-date-converter'
+
 // Bikram Sambat (B.S.) date helpers, ported from the Go nepali package.
 // Dates use the spreadsheet text format YYYY/M/D. Arithmetic is limited to month
 // rollover (every row is dated the 1st), which is all this app needs.
@@ -41,4 +43,14 @@ export function nextMonth({ year, month, day }) {
 export function shortDate(s) {
   const p = String(s).split('/')
   return p.length === 3 ? `${p[1]}/${p[2]}` : s
+}
+
+// todayBS returns today's date in Bikram Sambat as "YYYY/M/D" (converted locally, no API).
+export function todayBS() {
+  try {
+    const d = new NepaliDate(new Date())
+    return `${d.getYear()}/${d.getMonth() + 1}/${d.getDate()}`
+  } catch {
+    return ''
+  }
 }

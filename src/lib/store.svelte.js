@@ -61,6 +61,7 @@ export class Store {
   flash = $state('')
   error = $state('')
   warning = $state('')
+  loading = $state(false) // fetching a tab that has no cached data to show yet
   busy = $state(false)
   saving = $state(0)
   invoiceDate = $state(null)
@@ -68,6 +69,7 @@ export class Store {
 
   #tempNum = -1
   #cache = new Map() // in-session cache: tab -> { rows, tenantName, warning }
+  #flashTimer = null
 
   constructor() {
     const cfg = loadConfig()
@@ -87,7 +89,8 @@ export class Store {
   // ── derived views ──
 
   get currentTitle() {
-    return this.titles?.[this.tab] || this.tenantName || this.tab
+    // The tab name is the tenant name (sheets no longer have a title row).
+    return this.titles?.[this.tab] || this.tab
   }
 
   get invoice() {
@@ -202,6 +205,15 @@ export class Store {
     this.#save()
   }
 
+  // setFlash shows a transient info message that auto-clears.
+  #setFlash(msg, ms = 6000) {
+    this.flash = msg
+    clearTimeout(this.#flashTimer)
+    this.#flashTimer = setTimeout(() => {
+      this.flash = ''
+    }, ms)
+  }
+
   async #persist(fn, label) {
     this.saving++
     try {
@@ -303,30 +315,35 @@ export class Store {
     const tab = tabs.includes(this.lastTab) ? this.lastTab : tabs[0] || ''
     if (tab) await this.loadTab(tab)
     this.connected = true
-    this.flash = `Connected · ${this.sheetName || 'sheet'} · ${tabs.length} tab${tabs.length === 1 ? '' : 's'}.`
+    this.#setFlash(`Connected · ${this.sheetName || 'sheet'} · ${tabs.length} tab${tabs.length === 1 ? '' : 's'}.`)
   }
 
-  // loadTab: paint instantly from cache, then revalidate from the network. A tab already
-  // fetched this session is trusted (no refetch on switch). `force` skips the cache.
+  // loadTab: paint instantly from cache for speed, then ALWAYS revalidate from the network
+  // so edits made directly in Google Sheets show up on the next tab open — no manual refresh.
   async loadTab(tab, { force = false } = {}) {
-    if (!force) {
-      const cached = this.#readRowCache(tab)
-      if (cached) this.#applyCache(tab, cached)
-      if (this.#cache.has(tab)) return // fetched this session already — it's fresh
+    const switching = this.tab !== tab
+    this.tab = tab
+    this.lastTab = tab
+    const cached = force ? null : this.#readRowCache(tab)
+    if (cached) {
+      this.#applyCache(tab, cached) // instant paint from cache
+      this.loading = false
+    } else if (switching) {
+      // switching to an uncached tab — clear the previous tab's data and show a skeleton
+      // instead of briefly displaying the wrong tenant's rows
+      this.rows = []
+      this.warning = ''
+      this.loading = true
     }
     const { rows, unrecognized } = await this.sheets.allRows(this.sheetId, tab)
-    let name = ''
-    try {
-      name = await this.sheets.tenantName(this.sheetId, tab)
-    } catch {
-      /* title is optional */
-    }
+    if (this.tab !== tab) return // a newer tab switch superseded this load
     // Nothing is dropped; this is only a heads-up that some dates weren't clean B.S. dates
     // (shown as-is, so they may sort oddly). Setting the Date column to Plain text fixes it.
     const warning = unrecognized.length
       ? `${unrecognized.length} row${unrecognized.length === 1 ? '' : 's'} have a date I couldn't read as a B.S. date (shown as-is — e.g. “${unrecognized[0]}”), so they may sort oddly. Tip: set the Date column to Plain text in Google Sheets.`
       : ''
-    this.#applyCache(tab, this.#putCache(tab, rows, name, warning))
+    this.#applyCache(tab, this.#putCache(tab, rows, '', warning))
+    this.loading = false
   }
 
   // refresh force-reloads the current tab from the sheet (for edits made directly in Sheets).
@@ -453,6 +470,10 @@ export class Store {
     }
     this.rows = sortByDate([...this.rows, row])
     this.#syncCache()
+    this.#setFlash(
+      'Month added at the top — enter this month’s Current meter reading. Units, Electricity and Total Due are calculated automatically.',
+      9000,
+    )
     try {
       let num = 0
       await this.#persist(async () => {

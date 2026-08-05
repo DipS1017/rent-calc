@@ -1,6 +1,8 @@
 <script>
+  import { todayBS } from '../lib/nepali.js'
   let { store } = $props()
 
+  const today = todayBS()
   let open = $state(false)
   let renaming = $state(false)
   let renameValue = $state('')
@@ -84,6 +86,13 @@
     </div>
 
     <div class="flex-1"></div>
+
+    {#if today}
+      <span class="hidden shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white/70 px-2.5 py-1 text-xs font-medium text-slate-500 md:inline-flex" title="Today (Bikram Sambat)">
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 text-brand-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Today · {today}
+      </span>
+    {/if}
 
     {#if store.saving > 0}
       <span class="hidden items-center gap-1.5 text-xs font-medium text-slate-400 sm:inline-flex" role="status">

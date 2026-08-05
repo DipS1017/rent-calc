@@ -27,16 +27,17 @@ export function buildInvoice(rows, idx, { title, unitRate }) {
 
 // invoiceLineItems builds the ordered rows shown on the invoice.
 export function invoiceLineItems(inv) {
-  const items = [
-    { label: 'Rent', amount: inv.rent },
-    { label: 'Water', amount: inv.water },
-    { label: 'Garbage', amount: inv.garbage },
-    {
+  const items = []
+  if (inv.rent > 0) items.push({ label: 'Rent', amount: inv.rent })
+  if (inv.water > 0) items.push({ label: 'Water', amount: inv.water })
+  if (inv.garbage > 0) items.push({ label: 'Garbage', amount: inv.garbage })
+  if (inv.electricity > 0) {
+    items.push({
       label: 'Electricity',
       amount: inv.electricity,
       sub: `Meter ${inv.prevMeter} → ${inv.currMeter} · ${inv.units} units × Rs. ${inv.unitRate}`,
-    },
-  ]
+    })
+  }
   if (inv.internet > 0) items.push({ label: 'Internet', amount: inv.internet })
   if (inv.outstanding > 0) items.push({ label: 'Previous outstanding', amount: inv.outstanding })
   return items

@@ -11,7 +11,11 @@
   <div class="flex items-center justify-between gap-3 border-b border-slate-200/70 px-4 py-3 sm:px-5">
     <div class="min-w-0">
       <h2 class="truncate text-sm font-bold text-slate-900">{store.currentTitle}</h2>
-      <p class="text-xs text-slate-400">{store.rows.length} month{store.rows.length === 1 ? '' : 's'} · click a cell to edit</p>
+      <p class="text-xs text-slate-400">
+        {store.rows.length} month{store.rows.length === 1 ? '' : 's'} ·
+        <span class="text-slate-500">click a cell to edit</span> ·
+        <span class="font-medium text-brand-600">Units, Elec &amp; Total Due auto-calculate</span>
+      </p>
     </div>
     <div class="flex shrink-0 items-center gap-2">
       <button class="btn-ghost btn-sm" onclick={() => store.refresh()} disabled={store.busy} title="Reload this tab from Google Sheets">
@@ -26,7 +30,7 @@
   </div>
 
   <div class="max-h-[calc(100vh-360px)] min-h-[220px] overflow-auto scrollbar-slim">
-    <table class="w-full border-separate border-spacing-0 text-[13.5px]">
+    <table class="sheet-grid w-full border-separate border-spacing-0 text-[13.5px]">
       <thead>
         <tr>
           <th class="th w-[92px] text-left">Date</th>
@@ -45,11 +49,21 @@
         </tr>
       </thead>
       <tbody>
-        {#each rowsDesc as row (row.rowNum)}
-          <Row {store} {row} />
+        {#if store.loading}
+          {#each Array(8) as _, i}
+            <tr class="border-b border-slate-100">
+              <td colspan="99" class="px-3 py-3">
+                <div class="h-3.5 animate-pulse rounded bg-slate-100" style="width:{[96, 82, 90, 74, 88, 80, 92, 78][i]}%"></div>
+              </td>
+            </tr>
+          {/each}
         {:else}
-          <tr><td colspan="99" class="px-4 py-16 text-center text-slate-400">No rows yet — add the first month above.</td></tr>
-        {/each}
+          {#each rowsDesc as row (row.rowNum)}
+            <Row {store} {row} />
+          {:else}
+            <tr><td colspan="99" class="px-4 py-16 text-center text-slate-400">No rows yet — add the first month above.</td></tr>
+          {/each}
+        {/if}
       </tbody>
     </table>
   </div>
