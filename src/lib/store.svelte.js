@@ -68,7 +68,6 @@ export class Store {
   pendingDelete = $state(null) // rowNum awaiting delete confirmation
 
   #tempNum = -1
-  #cache = new Map() // in-session cache: tab -> { rows, tenantName, warning }
   #flashTimer = null
 
   constructor() {
@@ -139,6 +138,11 @@ export class Store {
       s.usagePct = 0
     }
 
+    // lifetime summary
+    s.months = n
+    s.avgBill = avg(rows.map((r) => r.totalDue))
+    s.collected = sum(rows.map((r) => r.totalDue))
+
     // trends (last 12 months)
     const slice = rows.slice(n > 12 ? n - 12 : 0)
     s.labels = slice.map((r) => shortDate(r.date))
@@ -158,51 +162,6 @@ export class Store {
       unitRate: this.unitRate,
       titles: this.titles,
     })
-  }
-
-  // ── tab cache (instant tab-switch + refresh; write-through on every edit) ──
-  #rowKey(tab) {
-    return `rentcalc.rows:${this.sheetId}:${tab}`
-  }
-  #tabsKey() {
-    return `rentcalc.tabs:${this.sheetId}`
-  }
-  #readLS(key) {
-    try {
-      return JSON.parse(localStorage.getItem(key) || 'null')
-    } catch {
-      return null
-    }
-  }
-  #writeLS(key, val) {
-    try {
-      localStorage.setItem(key, JSON.stringify(val))
-    } catch {
-      /* quota / unavailable — cache is best-effort */
-    }
-  }
-  #readRowCache(tab) {
-    const c = this.#cache.get(tab) || this.#readLS(this.#rowKey(tab))
-    return c && Array.isArray(c.rows) ? c : null
-  }
-  // putCache writes the current rows for a tab to both the in-session map and localStorage.
-  #putCache(tab, rows, tenantName, warning) {
-    const data = { rows, tenantName: tenantName || '', warning: warning || '' }
-    this.#cache.set(tab, data)
-    this.#writeLS(this.#rowKey(tab), data)
-    return data
-  }
-  // syncCache mirrors the live rows for the current tab into the cache (called after edits).
-  #syncCache() {
-    this.#putCache(this.tab, this.rows, this.tenantName, this.warning)
-  }
-  #applyCache(tab, data) {
-    this.tab = tab
-    this.rows = sortByDate(data.rows)
-    this.tenantName = data.tenantName || ''
-    this.warning = data.warning || ''
-    this.lastTab = tab
-    this.#save()
   }
 
   // setFlash shows a transient info message that auto-clears.
@@ -265,39 +224,30 @@ export class Store {
     }
   }
 
-  // autoConnect reopens the last sheet on page load when the cached token is still valid —
-  // so a refresh doesn't prompt for sign-in. If the token/sheet has lapsed, it silently
-  // falls back to the landing page.
+  // autoConnect reopens the last sheet on page load when the token is still valid — so a
+  // refresh lands straight on the dashboard (with a skeleton while the sheet loads) instead
+  // of the landing page. If the token/sheet has lapsed, it falls back to the landing page.
   async autoConnect() {
     if (this.connected || this.busy) return
     if (!this.auth.isSignedIn() || !this.sheetId) return
 
-    // Instant paint from cache so a refresh shows the app immediately, then revalidate.
-    const cachedTabs = this.#readLS(this.#tabsKey())
-    if (Array.isArray(cachedTabs) && cachedTabs.length) {
-      const tab = cachedTabs.includes(this.lastTab) ? this.lastTab : cachedTabs[0]
-      const cachedRows = this.#readLS(this.#rowKey(tab))
-      if (cachedRows && Array.isArray(cachedRows.rows)) {
-        this.tabs = cachedTabs
-        this.#applyCache(tab, cachedRows)
-        this.connected = true
-      }
-    }
-
+    // Valid session: go to the dashboard immediately and show a skeleton while we fetch.
+    this.connected = true
+    this.loading = true
     this.busy = true
     try {
       const tabs = await this.sheets.listTabs(this.sheetId)
       this.tabs = tabs
-      this.#writeLS(this.#tabsKey(), tabs)
       const tab = tabs.includes(this.lastTab) ? this.lastTab : tabs[0] || ''
-      if (tab) await this.loadTab(tab, { force: true }) // revalidate the visible tab
-      this.connected = true
+      if (tab) await this.loadTab(tab)
+      else this.loading = false
     } catch {
-      if (!this.connected) {
-        this.auth.signOut()
-        this.sheetId = ''
-        this.#save()
-      }
+      // token/sheet lapsed — drop back to the landing page and require a fresh sign-in
+      this.connected = false
+      this.loading = false
+      this.auth.signOut()
+      this.sheetId = ''
+      this.#save()
     } finally {
       this.busy = false
     }
@@ -311,48 +261,42 @@ export class Store {
 
     const tabs = await this.sheets.listTabs(id)
     this.tabs = tabs
-    this.#writeLS(this.#tabsKey(), tabs)
     const tab = tabs.includes(this.lastTab) ? this.lastTab : tabs[0] || ''
     if (tab) await this.loadTab(tab)
     this.connected = true
     this.#setFlash(`Connected · ${this.sheetName || 'sheet'} · ${tabs.length} tab${tabs.length === 1 ? '' : 's'}.`)
   }
 
-  // loadTab: paint instantly from cache for speed, then ALWAYS revalidate from the network
-  // so edits made directly in Google Sheets show up on the next tab open — no manual refresh.
-  async loadTab(tab, { force = false } = {}) {
-    const switching = this.tab !== tab
+  // loadTab always fetches the tab fresh from the sheet (no cache) and shows a skeleton while
+  // it loads — so edits made directly in Google Sheets always show up, no manual refresh.
+  async loadTab(tab) {
     this.tab = tab
     this.lastTab = tab
-    const cached = force ? null : this.#readRowCache(tab)
-    if (cached) {
-      this.#applyCache(tab, cached) // instant paint from cache
-      this.loading = false
-    } else if (switching) {
-      // switching to an uncached tab — clear the previous tab's data and show a skeleton
-      // instead of briefly displaying the wrong tenant's rows
-      this.rows = []
-      this.warning = ''
-      this.loading = true
+    this.rows = []
+    this.warning = ''
+    this.loading = true
+    this.#save()
+    try {
+      const { rows, unrecognized } = await this.sheets.allRows(this.sheetId, tab)
+      if (this.tab !== tab) return // a newer tab switch superseded this load
+      // Nothing is dropped; this is only a heads-up that some dates weren't clean B.S. dates
+      // (shown as-is, so they may sort oddly). Setting the Date column to Plain text fixes it.
+      this.warning = unrecognized.length
+        ? `${unrecognized.length} row${unrecognized.length === 1 ? '' : 's'} have a date I couldn't read as a B.S. date (shown as-is — e.g. “${unrecognized[0]}”), so they may sort oddly. Tip: set the Date column to Plain text in Google Sheets.`
+        : ''
+      this.rows = sortByDate(rows)
+    } finally {
+      if (this.tab === tab) this.loading = false
     }
-    const { rows, unrecognized } = await this.sheets.allRows(this.sheetId, tab)
-    if (this.tab !== tab) return // a newer tab switch superseded this load
-    // Nothing is dropped; this is only a heads-up that some dates weren't clean B.S. dates
-    // (shown as-is, so they may sort oddly). Setting the Date column to Plain text fixes it.
-    const warning = unrecognized.length
-      ? `${unrecognized.length} row${unrecognized.length === 1 ? '' : 's'} have a date I couldn't read as a B.S. date (shown as-is — e.g. “${unrecognized[0]}”), so they may sort oddly. Tip: set the Date column to Plain text in Google Sheets.`
-      : ''
-    this.#applyCache(tab, this.#putCache(tab, rows, '', warning))
-    this.loading = false
   }
 
-  // refresh force-reloads the current tab from the sheet (for edits made directly in Sheets).
+  // refresh reloads the current tab from the sheet (for edits made directly in Sheets).
   async refresh() {
     if (!this.tab || this.busy) return
     this.busy = true
     this.error = ''
     try {
-      await this.loadTab(this.tab, { force: true })
+      await this.loadTab(this.tab)
     } catch (e) {
       this.error = e.message
     } finally {
@@ -395,9 +339,7 @@ export class Store {
       }
       this.tab = newName
       this.lastTab = newName
-      this.#cache.delete(old)
-      this.#writeLS(this.#tabsKey(), this.tabs)
-      this.#syncCache()
+      this.#save()
       this.flash = `Renamed to "${newName}".`
     } catch (e) {
       this.error = `Rename failed: ${e.message}`
@@ -437,7 +379,6 @@ export class Store {
     const next = this.rows.slice()
     next[idx] = row
     this.rows = sortByDate(next)
-    this.#syncCache()
     this.#persist(() => this.sheets.updateRow(this.sheetId, this.tab, rowNum, row), 'Save').catch(() => {})
   }
 
@@ -469,7 +410,6 @@ export class Store {
       units, electricity, outstanding: 0, totalDue, note: '', rowNum: tempNum,
     }
     this.rows = sortByDate([...this.rows, row])
-    this.#syncCache()
     this.#setFlash(
       'Month added at the top — enter this month’s Current meter reading. Units, Electricity and Total Due are calculated automatically.',
       9000,
@@ -488,7 +428,6 @@ export class Store {
     } catch {
       this.rows = this.rows.filter((r) => r.rowNum !== tempNum)
     }
-    this.#syncCache()
   }
 
   // ── delete row (with confirmation) ──
@@ -509,7 +448,6 @@ export class Store {
     this.rows = this.rows
       .filter((r) => r.rowNum !== rowNum)
       .map((r) => (r.rowNum > rowNum ? { ...r, rowNum: r.rowNum - 1 } : r))
-    this.#syncCache()
     try {
       await this.#persist(() => this.sheets.deleteRow(this.sheetId, this.tab, rowNum), 'Delete')
     } catch {
