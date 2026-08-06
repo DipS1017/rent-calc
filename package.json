@@ -1,6 +1,6 @@
 {
   "name": "kirayaa",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Local, single-page rent calculator that reads and writes a Google Sheet directly from the browser.",
