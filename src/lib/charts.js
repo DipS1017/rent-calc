@@ -22,7 +22,7 @@ export function ensureCharts() {
     LinearScale, CategoryScale, Filler, Tooltip,
   )
   Chart.defaults.font.family = "'Inter', ui-sans-serif, system-ui, sans-serif"
-  Chart.defaults.color = '#64748b'
+  Chart.defaults.color = '#94a3b8'
   registered = true
 }
 

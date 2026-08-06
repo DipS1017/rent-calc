@@ -13,9 +13,9 @@
         labels: [...labels],
         datasets: [{
           data: [...values],
-          backgroundColor: '#a7f3d0',
-          hoverBackgroundColor: '#34d399',
-          borderRadius: 5,
+          backgroundColor: '#bfd3fe',
+          hoverBackgroundColor: '#2563eb',
+          borderRadius: 4,
           maxBarThickness: 22,
         }],
       },

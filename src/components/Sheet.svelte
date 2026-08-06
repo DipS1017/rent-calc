@@ -8,13 +8,17 @@
 </script>
 
 <section class="card mt-4 overflow-hidden">
-  <div class="flex items-center justify-between gap-3 border-b border-slate-200/70 px-4 py-3 sm:px-5">
+  <div class="flex items-center justify-between gap-3 border-b border-brand-200 px-4 py-3.5 sm:px-5">
     <div class="min-w-0">
-      <h2 class="truncate text-sm font-bold text-slate-900">{store.currentTitle}</h2>
-      <p class="text-xs text-slate-400">
-        {store.rows.length} month{store.rows.length === 1 ? '' : 's'} ·
-        <span class="text-slate-500">click a cell to edit</span> ·
-        <span class="font-medium text-brand-600">Units, Elec &amp; Total Due auto-calculate</span>
+      <h2 class="truncate text-h4 font-bold leading-tight tracking-tight text-brand-900">{store.currentTitle}</h2>
+      <p class="mt-1 text-[13px] text-brand-400">
+        {#if store.loading}
+          Loading…
+        {:else}
+          {store.rows.length} month{store.rows.length === 1 ? '' : 's'} on record ·
+          <span class="text-brand-500">click a cell to edit</span> ·
+          <span class="font-medium text-accent-600">Units, Elec &amp; Total Due auto-calculate</span>
+        {/if}
       </p>
     </div>
     <div class="flex shrink-0 items-center gap-2">
@@ -33,7 +37,7 @@
     <table class="sheet-grid w-full border-separate border-spacing-0 text-[13.5px]">
       <thead>
         <tr>
-          <th class="th w-[92px] text-left">Date</th>
+          <th class="th w-[112px] text-left">Date</th>
           <th class="th text-right">Rent</th>
           <th class="th text-right">Water</th>
           <th class="th text-right">Garbage</th>
@@ -61,7 +65,7 @@
           {#each rowsDesc as row (row.rowNum)}
             <Row {store} {row} />
           {:else}
-            <tr><td colspan="99" class="px-4 py-16 text-center text-slate-400">No rows yet — add the first month above.</td></tr>
+            <tr><td colspan="99" class="px-4 py-16 text-center text-brand-300">No rows yet — add the first month above.</td></tr>
           {/each}
         {/if}
       </tbody>
@@ -79,9 +83,9 @@
           <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
         </div>
         <div>
-          <h3 class="font-bold text-slate-900">Delete this month?</h3>
-          <p class="mt-1 text-sm text-slate-500">
-            <span class="font-semibold text-slate-700">{store.pendingDeleteRow.date}</span> will be removed from your Google Sheet. This can't be undone.
+          <h3 class="font-bold text-brand-900">Delete this month?</h3>
+          <p class="mt-1 text-sm text-brand-400">
+            <span class="font-semibold text-brand-700">{store.pendingDeleteRow.date}</span> will be removed from your Google Sheet. This can't be undone.
           </p>
         </div>
       </div>

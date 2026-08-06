@@ -99,36 +99,40 @@
     margin: 0 auto;
     background: #ffffff;
     color: #1e293b;
-    font-family: 'IBM Plex Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     font-size: 14px;
-    line-height: 1.5;
+    font-weight: 400;
+    line-height: 1.55;
   }
   .inv-head {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    background: #1a2230;
+    background: #0f172a;
     color: #ffffff;
-    padding: 28px 36px;
-    border-bottom: 4px solid #059669;
+    padding: 30px 36px;
+    border-bottom: 3px solid #2563eb;
   }
   .inv-brand {
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 700;
-    color: #6ee7b7;
+    color: #93b4fd;
   }
   .inv-title {
     font-size: 34px;
     font-weight: 800;
-    letter-spacing: 0.05em;
-    margin-top: 6px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-top: 4px;
   }
   .inv-sub {
-    font-size: 12px;
-    color: #6ee7b7;
-    margin-top: 6px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #93b4fd;
+    margin-top: 8px;
   }
   .inv-date-lbl {
     font-size: 10px;
@@ -155,9 +159,10 @@
     color: #64748b;
   }
   .inv-billed-name {
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 22px;
+    font-weight: 700;
     color: #0f172a;
+    line-height: 1.15;
     margin-top: 5px;
   }
   .inv-cols {
@@ -202,25 +207,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #059669;
+    background: #0f172a;
     color: #ffffff;
     border-radius: 8px;
-    padding: 16px 22px;
-    margin-top: 20px;
+    padding: 18px 24px;
+    margin-top: 22px;
   }
   .inv-total-lbl {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #93b4fd;
   }
   .inv-total-amt {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 800;
   }
   .inv-note {
     margin-top: 16px;
-    background: #ecfdf5;
-    border-left: 4px solid #059669;
+    background: #eff5ff;
+    border-left: 3px solid #2563eb;
     border-radius: 0 6px 6px 0;
     padding: 12px 16px;
     font-size: 12.5px;
@@ -237,10 +244,18 @@
   .inv-foot-brand {
     font-size: 14px;
     font-weight: 800;
-    color: #059669;
+    color: #0f172a;
   }
   .inv-foot-note {
     font-size: 11px;
     color: #94a3b8;
+  }
+  /* Ledger signature: figures and meter readings use tabular lining numerals. */
+  .inv-amt,
+  .inv-total-amt,
+  .inv-date,
+  .inv-itemsub {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 </style>

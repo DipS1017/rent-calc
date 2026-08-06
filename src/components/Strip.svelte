@@ -3,52 +3,94 @@
   import TrendChart from './TrendChart.svelte'
   import UnitsChart from './UnitsChart.svelte'
 
-  let { strip } = $props()
+  let { strip, loading = false } = $props()
 
-  const usageLabel = { high: 'Higher than usual', low: 'Lower than usual', normal: 'Typical usage' }
-  const usageClass = {
-    high: 'bg-rose-50 text-rose-600',
-    low: 'bg-sky-50 text-sky-600',
-    normal: 'bg-emerald-50 text-emerald-600',
-  }
-  const usageIcon = { high: '▲', low: '▼', normal: '✓' }
+  const usageLabel = { high: 'Higher than usual', low: 'Lower than usual', normal: 'Typical' }
+  const usageTone = { high: 'text-rose-600', low: 'text-sky-600', normal: 'text-emerald-600' }
+  const usageDot = { high: 'bg-rose-500', low: 'bg-sky-500', normal: 'bg-emerald-500' }
 </script>
 
-{#if strip.hasData}
-  <section class="grid gap-4 lg:grid-cols-2">
-    <!-- Bill trend -->
-    <div class="card p-5">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-[11px] font-bold tracking-wide text-slate-400 uppercase">This month's bill</div>
-          <div class="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">Rs {money(strip.total)}</div>
+{#if loading}
+  <section class="card overflow-hidden">
+    <div class="flex items-baseline justify-between border-b border-brand-200 px-5 py-3">
+      <div class="h-4 w-32 animate-pulse rounded bg-brand-100"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-px bg-brand-200 sm:grid-cols-4">
+      {#each Array(4) as _}
+        <div class="bg-white px-5 py-3.5">
+          <div class="h-2.5 w-20 animate-pulse rounded bg-brand-100"></div>
+          <div class="mt-2.5 h-6 w-24 animate-pulse rounded bg-brand-100"></div>
+          <div class="mt-2 h-2.5 w-16 animate-pulse rounded bg-brand-100"></div>
         </div>
+      {/each}
+    </div>
+    <div class="grid gap-px border-t border-brand-200 bg-brand-200 sm:grid-cols-2">
+      {#each Array(2) as _}
+        <div class="bg-white px-5 py-4"><div class="h-[92px] animate-pulse rounded bg-brand-50"></div></div>
+      {/each}
+    </div>
+  </section>
+{:else if strip.hasData}
+  <section class="card overflow-hidden">
+    <div class="flex items-baseline justify-between border-b border-brand-200 px-5 py-3">
+      <h2 class="text-h5 font-bold leading-none tracking-tight text-brand-900">Analytics</h2>
+      <span class="text-micro font-semibold tracking-wide text-brand-400 uppercase">
+        {strip.months} month{strip.months === 1 ? '' : 's'} on record
+      </span>
+    </div>
+
+    <!-- compact KPI row — hairlines via gap-px on a slate backing -->
+    <div class="grid grid-cols-2 gap-px bg-brand-200 sm:grid-cols-4">
+      <div class="bg-white px-5 py-3.5">
+        <div class="text-micro font-semibold tracking-wide text-brand-400 uppercase">This month's bill</div>
+        <div class="mt-1.5 font-mono text-h4 leading-none font-bold tracking-tight text-brand-900 tabular-nums">Rs&thinsp;{money(strip.total)}</div>
         {#if strip.hasPrev}
-          <span class="mt-1 inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold {strip.totalUp ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
-            {strip.totalUp ? '▲' : '▼'} {strip.totalDeltaPct}% <span class="font-normal opacity-70">vs last</span>
-          </span>
+          <div class="mt-2 inline-flex items-center gap-1.5 text-[12px] font-semibold {strip.totalUp ? 'text-rose-600' : 'text-emerald-600'}">
+            <span class="h-1.5 w-1.5 rounded-full {strip.totalUp ? 'bg-rose-500' : 'bg-emerald-500'}"></span>
+            {strip.totalUp ? '+' : '−'}{strip.totalDeltaPct}% <span class="font-normal text-brand-400">vs last</span>
+          </div>
+        {:else}
+          <div class="mt-2 text-[12px] text-brand-300">first month</div>
         {/if}
       </div>
-      <div class="relative mt-3 h-[128px]">
-        <TrendChart labels={strip.labels} values={strip.billSeries} />
+
+      <div class="bg-white px-5 py-3.5">
+        <div class="text-micro font-semibold tracking-wide text-brand-400 uppercase">Electricity</div>
+        <div class="mt-1.5 font-mono text-h4 leading-none font-bold tracking-tight text-brand-900 tabular-nums">
+          {strip.units}<span class="ml-1 font-sans text-sm font-medium text-brand-400">units</span>
+        </div>
+        <div class="mt-2 inline-flex items-center gap-1.5 text-[12px] font-semibold {usageTone[strip.usageFlag]}">
+          <span class="h-1.5 w-1.5 rounded-full {usageDot[strip.usageFlag]}"></span>
+          {usageLabel[strip.usageFlag]}{#if strip.usageFlag !== 'normal' && strip.avgUnits}&nbsp;{strip.usagePct > 0 ? '+' : ''}{strip.usagePct}%{/if}
+        </div>
+      </div>
+
+      <div class="bg-white px-5 py-3.5">
+        <div class="text-micro font-semibold tracking-wide text-brand-400 uppercase">Avg / month</div>
+        <div class="mt-1.5 font-mono text-h4 leading-none font-bold tracking-tight text-brand-900 tabular-nums">Rs&thinsp;{money(strip.avgBill)}</div>
+        <div class="mt-2 text-[12px] text-brand-400">across {strip.months} month{strip.months === 1 ? '' : 's'}</div>
+      </div>
+
+      <div class="bg-white px-5 py-3.5">
+        <div class="text-micro font-semibold tracking-wide text-brand-400 uppercase">Billed to date</div>
+        <div class="mt-1.5 font-mono text-h4 leading-none font-bold tracking-tight text-brand-900 tabular-nums">Rs&thinsp;{money(strip.collected)}</div>
+        <div class="mt-2 text-[12px] text-brand-400">total across all months</div>
       </div>
     </div>
 
-    <!-- Electricity usage + anomaly -->
-    <div class="card p-5">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <div class="text-[11px] font-bold tracking-wide text-slate-400 uppercase">Electricity this month</div>
-          <div class="mt-1 text-3xl font-extrabold tracking-tight text-slate-900">
-            {strip.units} <span class="text-lg font-semibold text-slate-400">units</span>
-          </div>
+    <!-- charts, compact -->
+    <div class="grid gap-px border-t border-brand-200 bg-brand-200 sm:grid-cols-2">
+      <div class="bg-white px-5 pt-3 pb-3.5">
+        <div class="mb-1.5 text-micro font-semibold tracking-wide text-brand-400 uppercase">Bill, last months</div>
+        <div class="relative h-[92px]">
+          <TrendChart labels={strip.labels} values={strip.billSeries} />
         </div>
-        <span class="mt-1 inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold {usageClass[strip.usageFlag]}">
-          {usageIcon[strip.usageFlag]} {usageLabel[strip.usageFlag]}{#if strip.usageFlag !== 'normal' && strip.avgUnits}&nbsp;{strip.usagePct > 0 ? '+' : ''}{strip.usagePct}%{/if}
-        </span>
       </div>
-      <div class="relative mt-3 h-[128px]">
-        <UnitsChart labels={strip.labels} values={strip.unitSeries} />
+      <div class="bg-white px-5 pt-3 pb-3.5">
+        <div class="mb-1.5 text-micro font-semibold tracking-wide text-brand-400 uppercase">Units, last months</div>
+        <div class="relative h-[92px]">
+          <UnitsChart labels={strip.labels} values={strip.unitSeries} />
+        </div>
       </div>
     </div>
   </section>

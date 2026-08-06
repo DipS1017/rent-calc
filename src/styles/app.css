@@ -1,38 +1,53 @@
 @import 'tailwindcss';
 
-/* ─────────────────────────  Kirayaa design system  ─────────────────────────
-   Professional green. IBM Plex Sans, emerald→teal brand, rose/amber deltas,
-   slate neutrals, soft tinted shadows, generous radii. Light theme. */
-
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('/inter.woff2') format('woff2');
-}
+/* ─────────────────────  Kirayaa design system — "Console"  ───────────────────
+   Clean corporate SaaS dashboard. Inter throughout, slate ink, one confident
+   royal-blue primary, soft pastel status chips, white cards on a pale lavender
+   canvas. Dense, tidy tables with hairline row dividers. No ornament. */
 
 @theme {
-  --font-sans: 'IBM Plex Sans', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'Inter', ui-sans-serif, system-ui, sans-serif; /* figures: rely on tabular-nums */
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  /* brand = green (emerald) */
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-200: #a7f3d0;
-  --color-brand-300: #6ee7b7;
-  --color-brand-400: #34d399;
-  --color-brand-500: #10b981;
-  --color-brand-600: #059669;
-  --color-brand-700: #047857;
-  --color-brand-800: #065f46;
-  --color-brand-900: #064e3b;
+  /* Type scale — base 16px, ratio 1.25 (major third). */
+  --text-micro: 0.6875rem;  /*   11px — uppercase column heads, eyebrows */
+  --text-mini: 0.8125rem;   /*   13px — captions, meta */
+  --text-base: 1rem;        /*   16px — body */
+  --text-h5: 1.25rem;       /*   20px */
+  --text-h4: 1.5rem;        /*   24px */
+  --text-h3: 1.875rem;      /*   30px */
+  --text-h2: 2.25rem;       /*   36px */
+  --text-h1: 2.75rem;       /*   44px — hero figures */
+  --text-display: 3.25rem;  /*   52px — hero headline */
 
-  /* secondary accent = teal (used in gradients) */
-  --color-iris-500: #14b8a6;
-  --color-iris-600: #0d9488;
+  /* brand ramp = slate (corporate neutrals) — text, borders, header bands. */
+  --color-brand-50: #f8fafc;
+  --color-brand-100: #f1f5f9;
+  --color-brand-200: #e2e8f0;
+  --color-brand-300: #cbd5e1;
+  --color-brand-400: #94a3b8;
+  --color-brand-500: #64748b;
+  --color-brand-600: #475569;
+  --color-brand-700: #334155;
+  --color-brand-800: #1e293b;
+  --color-brand-900: #0f172a;
 
-  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 12px rgb(15 23 42 / 0.06);
-  --shadow-glow: 0 8px 30px rgb(16 185 129 / 0.28);
+  /* accent = royal blue — the primary. Buttons, links, active states, logo. */
+  --color-accent-50: #eff5ff;
+  --color-accent-100: #dbe7fe;
+  --color-accent-200: #bfd3fe;
+  --color-accent-300: #93b4fd;
+  --color-accent-400: #6090fa;
+  --color-accent-500: #3b6cf6;
+  --color-accent-600: #2563eb;
+  --color-accent-700: #1d4ed8;
+  --color-accent-800: #1e40af;
+  --color-accent-900: #1e3a8a;
+
+  /* Flat: borderless cards separated by only a faint shadow. */
+  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.03);
+  --shadow-glow: none;
 }
 
 @layer base {
@@ -43,11 +58,8 @@
     height: 100%;
     margin: 0;
     font-family: var(--font-sans);
-    color: var(--color-slate-800);
-    background:
-      radial-gradient(1100px 520px at 100% -8%, var(--color-brand-100), transparent 60%),
-      radial-gradient(900px 500px at -10% 110%, #ccfbf1, transparent 55%),
-      var(--color-slate-50);
+    color: var(--color-brand-800); /* slate ink */
+    background: #eef1fb; /* pale lavender-blue canvas */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizelegibility;
   }
@@ -58,64 +70,63 @@
 
 /* base button as a real utility so variants can @apply it (Tailwind v4 rule) */
 @utility btn {
-  @apply inline-flex select-none items-center justify-center gap-2 rounded-xl px-4 py-2.5
-         text-sm font-semibold transition active:scale-[.98] disabled:pointer-events-none
+  @apply inline-flex select-none items-center justify-center gap-2 rounded-md px-4 py-2
+         text-sm font-semibold transition active:scale-[.99] disabled:pointer-events-none
          disabled:opacity-55 focus-visible:outline-none focus-visible:ring-2
-         focus-visible:ring-brand-500/60 focus-visible:ring-offset-2;
+         focus-visible:ring-brand-500/50 focus-visible:ring-offset-2;
 }
 
 @layer components {
   .brandmark {
-    @apply inline-flex h-8 w-8 items-center justify-center rounded-lg text-white font-black;
-    background-color: var(--color-brand-600);
-    box-shadow: var(--shadow-glow);
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-[18px] font-bold leading-none text-white;
+    background-color: var(--color-accent-600);
   }
   .brand-gradient-text {
-    color: var(--color-brand-600);
+    color: var(--color-accent-600);
   }
 
   .btn-primary {
-    @apply btn text-white shadow-[var(--shadow-glow)];
-    background-color: var(--color-brand-600);
+    @apply btn text-white;
+    background-color: var(--color-accent-600);
   }
   .btn-primary:hover {
-    filter: brightness(1.06);
+    background-color: var(--color-accent-700);
   }
   .btn-ghost {
-    @apply btn border border-slate-200 bg-white/80 text-slate-700 backdrop-blur hover:bg-white hover:border-slate-300;
+    @apply btn border border-brand-200 bg-white text-brand-700 hover:border-brand-300 hover:bg-brand-50;
   }
   .btn-sm {
     @apply px-3 py-1.5 text-[13px] rounded-lg;
   }
 
-  /* sticky spreadsheet header cell */
+  /* sticky table column head — pale slate band, muted uppercase labels */
   .th {
-    @apply sticky top-0 z-10 border-b border-slate-200 bg-slate-50/95 px-3 py-2.5
-           text-[11px] font-bold uppercase tracking-wide text-slate-500 backdrop-blur;
+    @apply sticky top-0 z-10 border-b border-brand-200 bg-brand-50 px-3 py-2.5
+           text-[11px] font-semibold uppercase tracking-wide text-brand-500;
   }
 
   .card {
-    @apply rounded-2xl border border-slate-200/70 bg-white/80 shadow-[var(--shadow-soft)] backdrop-blur;
+    @apply rounded-xl bg-white shadow-[var(--shadow-soft)];
   }
 
-  /* editable spreadsheet cell — glows on hover so it's obviously editable */
+  /* editable cell — bigger text, tighter rows; blue ring signals it's editable */
   .cell {
-    @apply w-full cursor-text bg-transparent px-3 py-2 text-[13.5px] text-slate-800 outline-none
-           transition placeholder:text-slate-300;
+    @apply w-full cursor-text bg-transparent px-3 py-1.5 text-[14px] text-brand-800 outline-none
+           transition placeholder:text-brand-300;
   }
   .cell:hover {
-    @apply rounded-md bg-brand-50/60 ring-1 ring-inset ring-brand-200;
+    @apply rounded-md bg-accent-50/70 ring-1 ring-inset ring-accent-200;
   }
   .cell:focus {
-    @apply rounded-md bg-white ring-2 ring-inset ring-brand-500;
+    @apply rounded-md bg-white ring-2 ring-inset ring-accent-500;
   }
   .cell-num {
-    @apply text-right tabular-nums;
+    @apply text-right font-mono text-[14px] tabular-nums;
   }
 
   /* auto-calculated (read-only) cell — visibly not editable */
   .auto-cell {
-    @apply cursor-default select-none bg-slate-50/70 px-3 py-2 text-right align-middle tabular-nums;
+    @apply cursor-default select-none bg-brand-50/60 px-3 py-1.5 text-right align-middle font-mono text-[14px] tabular-nums;
   }
   /* "auto" chip shown in the header of calculated columns */
   .auto-tag {

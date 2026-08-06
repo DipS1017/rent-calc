@@ -29,10 +29,10 @@
 </script>
 
 <tr
-  class="group border-b border-slate-100 last:border-0 hover:bg-slate-50/60 {pulse ? 'saved-pulse' : ''}"
+  class="group border-b border-brand-100 last:border-0 hover:bg-brand-50/70 {pulse ? 'saved-pulse' : ''}"
   onanimationend={() => (pulse = false)}
 >
-  <td class="w-[92px] p-0"><input class="cell font-medium" bind:value={date} onchange={commit} aria-label="Date" /></td>
+  <td class="w-[112px] p-0"><input class="cell font-mono text-[14px]" bind:value={date} onchange={commit} aria-label="Date" /></td>
   <td class="p-0"><input class={num} bind:value={rent} onchange={commit} inputmode="numeric" aria-label="Rent" /></td>
   <td class="p-0"><input class={num} bind:value={water} onchange={commit} inputmode="numeric" aria-label="Water" /></td>
   <td class="p-0"><input class={num} bind:value={garbage} onchange={commit} inputmode="numeric" aria-label="Garbage" /></td>
@@ -42,21 +42,21 @@
 
   <td class="{ro} text-right">
     {#if row.units}
-      <span class="inline-flex rounded-md bg-amber-50 px-1.5 py-0.5 text-xs font-semibold text-amber-600">+{row.units}</span>
-    {:else}<span class="text-slate-300">—</span>{/if}
+      <span class="inline-flex rounded-full bg-accent-50 px-2 py-0.5 font-mono text-[12px] font-semibold text-accent-700 tabular-nums">+{row.units}</span>
+    {:else}<span class="text-brand-200">—</span>{/if}
   </td>
-  <td class="{ro} text-slate-500">{row.electricity || '—'}</td>
+  <td class="{ro} text-brand-400">{row.electricity || '—'}</td>
   <td class="p-0"><input class={num} bind:value={outstanding} onchange={commit} inputmode="numeric" placeholder="—" aria-label="Outstanding" /></td>
-  <td class="{ro} font-bold text-slate-900">{money(row.totalDue)}</td>
+  <td class="{ro} font-bold text-brand-900">{money(row.totalDue)}</td>
 
   <td class="max-w-[200px] p-0">
     <input class="cell truncate" bind:value={note} onchange={commit} title={note || 'Add a note'} placeholder="—" aria-label="Note" />
   </td>
 
   <td class="px-3 py-2 text-right whitespace-nowrap">
-    <button class="text-xs font-semibold text-brand-600 hover:underline" onclick={() => store.openInvoice(row.date)}>Invoice</button>
+    <button class="text-[13px] font-semibold text-accent-600 hover:text-accent-700 hover:underline" onclick={() => store.openInvoice(row.date)}>Invoice</button>
     <button
-      class="ml-3 align-middle text-slate-300 opacity-0 transition hover:text-rose-500 group-hover:opacity-100"
+      class="ml-3 align-middle text-brand-200 opacity-0 transition hover:text-rose-500 group-hover:opacity-100"
       title="Delete this month"
       aria-label="Delete this month"
       onclick={() => store.askDelete(row.rowNum)}
