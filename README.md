@@ -2,7 +2,7 @@
 
 # 🔑 Kirayaa — *rent, sorted.*
 
-**A modern, single-page tool for landlords to track rent, utilities, and electricity meters across tenants — with your Google Sheet as the source of truth and one-click invoices.**
+**A clean, single-page console for landlords to track rent, utilities, and electricity meters across tenants — with your Google Sheet as the source of truth and one-click invoices.**
 
 No backend. No database. The browser reads and writes your Google Sheet directly, so your data never leaves your Google account.
 
@@ -14,20 +14,20 @@ No backend. No database. The browser reads and writes your Google Sheet directly
 
 ## What it is
 
-Kirayaa is a **browser-only app** (Svelte + Vite + Tailwind, charts by Chart.js). You sign in with Google, pick your existing rent spreadsheet, and edit it like a fast, focused app:
+Kirayaa is a **browser-only app** (Svelte 5 + Vite + Tailwind v4, charts by Chart.js). You sign in with Google, pick your existing rent spreadsheet, and edit it like a fast, focused dashboard:
 
 - one **tab per tenant**, chosen from a dropdown;
 - an **editable grid** — click any cell, and the change (plus recomputed electricity + totals) writes straight back to your sheet;
-- **analytics** that actually help — this month vs. usual, and an electricity-usage anomaly flag that catches meter misreads before you bill;
+- a compact **analytics** band — this month's bill (with change vs. last month), electricity units with an anomaly flag, average bill, and total billed to date, plus bill/units trend charts;
 - **one-click invoices** you can download as PNG or PDF for each month.
 
 It's built to open once a month, calculate rent, and send bills — fast.
 
-![The app](docs/app.png)
+![The dashboard](docs/app.png)
 
 **Invoices** are generated from each row and open in a popup with **Download PNG / PDF**. Any note on the row prints on the bill.
 
-<div align="center"><img src="docs/invoice.png" width="520" alt="Generated invoice"></div>
+<div align="center"><img src="docs/invoice.png" width="480" alt="Generated invoice"></div>
 
 ---
 
@@ -36,18 +36,19 @@ It's built to open once a month, calculate rent, and send bills — fast.
 - 🔐 **Sign in with Google**, then pick your sheet from Drive's own file chooser — least-privilege `drive.file` scope means the app can only touch the one file you pick.
 - 📝 **Editable spreadsheet** — edits are *optimistic* (instant UI) and write through to Google Sheets in the background.
 - ⚡ **Electricity from the meter** — enter Prev/Curr readings; units, electricity, and the total recompute automatically.
-- 📊 **Useful analytics** — this-month bill (with trend) and an electricity **anomaly flag** (▲ higher / ✓ typical / ▼ lower than the tenant's average).
+- 📊 **Dense analytics** — this-month bill (with % change), an electricity **anomaly flag** (higher / typical / lower than the tenant's average), average monthly bill, total billed to date, and bill/units trend charts.
 - 🧾 **Invoices** — clean PNG/PDF per month, with the tenant's note included.
 - ➕ **Add month** (auto-filled from the previous month) · 🗑 **delete row** (with confirmation) · ✏️ **rename tab** — all write to the sheet.
 - 🗓 **Bikram Sambat (B.S.) dates**, newest month on top.
-- 💾 **Cached** — tabs and rows are cached locally for instant switching and refresh; edits write through, and a **Refresh** button re-pulls from Sheets on demand.
+- 🔄 **Always fresh** — every open re-reads the sheet directly (no stale local copy), so edits you make in Google Sheets show up without a hard refresh.
+- 🧭 **Routes** — a landing page at `/` and the dashboard at `/dashboard`; a valid session lands straight on the dashboard.
 - 🌐 **No server** — deployable as a static site (e.g. GitHub Pages).
 
 ---
 
 ## How it works
 
-1. **Sign in & pick your sheet.** Google's Picker lists your spreadsheets; choose your rent tracker.
+1. **Sign in & pick your sheet.** Google's Picker lists your spreadsheets; choose your rent tracker — you're taken to the **dashboard** (`/dashboard`).
 2. **Pick a tenant** from the dropdown (one tab per tenant).
 3. **Edit the grid.** Change any cell — electricity and the total recompute and save back to your sheet.
 4. **Add the new month** with one click (it carries over rent/water/garbage/internet and last month's meter).
@@ -76,7 +77,7 @@ One tab per tenant, columns in this order (**A → L**):
 
 - The **auto** columns are computed and written back on save — you can leave them blank.
 - Each row is **self-contained** (stores both meters), so invoices don't depend on the row above.
-- An optional merged title row at the top holds the tenant name (e.g. `Unit 4 — Sample tenant`) — used as the default invoice title.
+- The **tab name is the tenant name** (e.g. `Unit 4`) and is used as the default invoice title — no header or title row needed.
 - **Tip:** set the Date column's format to **Plain text** (Format → Number → Plain text) so Google doesn't convert B.S. dates into real dates.
 
 ---
@@ -111,7 +112,7 @@ npm install
 npm run dev        # http://localhost:5173
 ```
 
-Click **Sign in with Google**, grant access (click through the "unverified app" notice — normal for a personal app), and pick your spreadsheet. The session is remembered, so a refresh reopens straight into the app; it signs in fresh once the token lapses (~1h).
+Click **Sign in with Google**, grant access (click through the "unverified app" notice — normal for a personal app), and pick your spreadsheet. The session is remembered, so a refresh reopens straight into the dashboard; it signs in fresh once the token lapses (~1h).
 
 ### 4. Build & deploy
 
@@ -122,13 +123,16 @@ npm run preview    # serve the built site locally
 
 `dist/` is a static bundle you can host anywhere (e.g. GitHub Pages). Add the deployed origin to your OAuth client's **Authorized JavaScript origins**.
 
+> **Deploying with the `/dashboard` route:** the app uses real paths, so a static host must fall back to `index.html` for unknown routes. On GitHub Pages, add a `404.html` that serves the same app (SPA fallback) so a direct visit or hard refresh on `/dashboard` doesn't 404.
+
 ---
 
-## Data, caching & privacy
+## Data & privacy
 
 - **All data lives in your Google Sheet.** The app has no backend and stores nothing server-side.
+- **No local copy of your sheet.** Kirayaa keeps no cache of your rows — every open re-reads the sheet directly, so it's always current. Only the tiny config (which sheet, which tab) is remembered in `localStorage`.
+- **Edits are optimistic + write-through** — the UI updates instantly and the change is written to Sheets in the background; a **Refresh** button re-pulls the current tab on demand.
 - **The OAuth token stays in your browser** (`localStorage`), carrying Google's ~1h expiry.
-- **Caching:** tabs and rows are cached in `localStorage` for instant tab-switching and refresh. Your edits **write through** to the cache immediately; use **Refresh** to re-pull a tab if you also edited it directly in Google Sheets.
 - The only network calls are to Google (`accounts.google.com`, `apis.google.com`, `sheets.googleapis.com`).
 - `.env` and build output are git-ignored; only a **public** client ID + API key are ever shipped.
 
@@ -148,11 +152,12 @@ npm run preview    # serve the built site locally
 index.html              app entry
 src/
   main.js               mounts <App>
-  App.svelte            layout: landing / topbar + analytics + grid + invoice
+  App.svelte            router: landing (/) · dashboard (/dashboard) · sign-in gate
   components/           Landing, TopBar, Strip, Sheet, Row, InvoiceModal,
                         GoogleButton, TrendChart, UnitsChart
   lib/
-    store.svelte.js     reactive controller (state, optimistic writes, cache)
+    store.svelte.js     reactive controller (state, optimistic writes, always-fresh loads)
+    router.svelte.js    tiny path router (landing / dashboard)
     sheets.js           Sheets REST client + row parse/serialize   (+ .test.js)
     auth.js             Google Identity Services token flow (drive.file)
     picker.js           Google Picker — choose a spreadsheet from Drive
