@@ -37,7 +37,7 @@
     <button class="flex shrink-0 items-center gap-2.5 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50" onclick={() => onHome?.()} title="Back to home">
       <div class="brandmark shrink-0">K</div>
       <div class="mr-2 hidden shrink-0 leading-none sm:block">
-        <div class="text-h5 font-bold leading-none tracking-tight text-brand-900">Kirayaa</div>
+        <div class="font-display text-h4 leading-none tracking-tight text-brand-800">Kirayaa</div>
         {#if store.sheetName}
           <div class="mt-1 max-w-[150px] truncate text-[11px] text-brand-400" title={store.sheetName}>{store.sheetName}</div>
         {/if}
@@ -113,14 +113,14 @@
 
 {#if renaming}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm" onclick={() => (renaming = false)}>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-brand-900/40 p-4 backdrop-blur-sm" onclick={() => (renaming = false)}>
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-    <form class="card w-full max-w-sm p-6" onclick={(e) => e.stopPropagation()} onsubmit={submitRename}>
-      <h3 class="font-bold text-brand-900">Rename tenant tab</h3>
-      <p class="mt-1 text-sm text-brand-400">This renames the tab in your Google Sheet.</p>
+    <form class="card w-full max-w-sm p-7" onclick={(e) => e.stopPropagation()} onsubmit={submitRename}>
+      <h3 class="font-display text-h5 tracking-tight text-brand-800">Rename tenant tab</h3>
+      <p class="mt-1.5 text-sm text-brand-500">This renames the tab in your Google Sheet.</p>
       <!-- svelte-ignore a11y_autofocus -->
       <input
-        class="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-brand-400 focus:ring-2 focus:ring-brand-200 focus:outline-none"
+        class="mt-4 w-full rounded-2xl border border-brand-300 px-4 py-2.5 text-sm focus:border-brand-800 focus:ring-2 focus:ring-brand-800/15 focus:outline-none"
         bind:value={renameValue}
         autofocus
         aria-label="New tab name"

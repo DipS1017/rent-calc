@@ -30,20 +30,20 @@
 
 {#if inv}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  <div class="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-900/50 p-4 backdrop-blur-sm sm:p-8" onclick={() => store.closeInvoice()}>
+  <div class="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-brand-900/40 p-4 backdrop-blur-sm sm:p-8" onclick={() => store.closeInvoice()}>
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
     <div class="card my-auto w-full max-w-[720px] overflow-hidden" role="dialog" aria-modal="true" aria-label="Invoice" onclick={(e) => e.stopPropagation()}>
-      <div class="flex items-center justify-between border-b border-slate-200/70 px-5 py-3">
-        <h2 class="text-sm font-bold text-slate-900">Invoice · {inv.date}</h2>
+      <div class="flex items-center justify-between border-b border-brand-200 px-6 py-3.5">
+        <h2 class="text-sm font-medium text-brand-800">Invoice · {inv.date}</h2>
         <button class="btn-ghost btn-sm" onclick={() => store.closeInvoice()}>Close</button>
       </div>
 
-      <div class="overflow-x-auto bg-slate-100 p-4 scrollbar-slim sm:p-6">
+      <div class="overflow-x-auto bg-brand-100 p-4 scrollbar-slim sm:p-6">
         <!-- Printable invoice: self-contained, hex colours only (html2canvas-safe). -->
         <div class="invoice" bind:this={node}>
           <div class="inv-head">
             <div>
-              <div class="inv-title">INVOICE</div>
+              <div class="inv-title">Invoice</div>
               <div class="inv-sub">Rent · Utilities · Electricity</div>
             </div>
             <div>
@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2.5 border-t border-slate-200/70 px-5 py-3">
+      <div class="flex justify-end gap-2.5 border-t border-brand-200 px-6 py-3.5">
         <button class="btn-ghost btn-sm" onclick={() => save('png')} disabled={downloading}>Download PNG</button>
         <button class="btn-primary btn-sm" onclick={() => save('pdf')} disabled={downloading}>Download PDF</button>
       </div>
@@ -98,7 +98,7 @@
     width: 640px;
     margin: 0 auto;
     background: #ffffff;
-    color: #1e293b;
+    color: #17191c;
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     font-size: 14px;
     font-weight: 400;
@@ -108,37 +108,38 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    background: #0f172a;
+    background: #17191c;
     color: #ffffff;
-    padding: 30px 36px;
-    border-bottom: 3px solid #2563eb;
+    padding: 32px 36px;
+    border-bottom: 3px solid #fbe1d1;
   }
   .inv-brand {
     font-size: 11px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    font-weight: 700;
-    color: #93b4fd;
+    font-weight: 500;
+    color: #fbe1d1;
   }
   .inv-title {
-    font-size: 34px;
-    font-weight: 800;
+    font-family: 'Source Serif 4', ui-serif, Georgia, serif;
+    font-size: 42px;
+    font-weight: 400;
     letter-spacing: -0.01em;
     line-height: 1;
-    margin-top: 4px;
+    margin-top: 2px;
   }
   .inv-sub {
     font-size: 11px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #93b4fd;
-    margin-top: 8px;
+    color: #fbe1d1;
+    margin-top: 10px;
   }
   .inv-date-lbl {
     font-size: 10px;
     letter-spacing: 0.14em;
-    font-weight: 700;
-    color: #a0acbe;
+    font-weight: 500;
+    color: #a3a6af;
     text-align: right;
   }
   .inv-date {
@@ -155,100 +156,104 @@
   .inv-billed-lbl {
     font-size: 10px;
     letter-spacing: 0.14em;
-    font-weight: 700;
-    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #777b86;
   }
   .inv-billed-name {
-    font-size: 22px;
-    font-weight: 700;
-    color: #0f172a;
+    font-family: 'Source Serif 4', ui-serif, Georgia, serif;
+    font-size: 27px;
+    font-weight: 400;
+    color: #17191c;
     line-height: 1.15;
-    margin-top: 5px;
+    margin-top: 4px;
   }
   .inv-cols {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
     letter-spacing: 0.06em;
-    font-weight: 700;
-    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #a3a6af;
     padding-bottom: 8px;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 1px solid #ececec;
   }
   .inv-item {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     padding: 13px 0;
-    border-bottom: 1px solid #eef2f7;
+    border-bottom: 1px solid #f2f2f3;
   }
   .inv-item.zebra {
-    background: #f8fafc;
+    background: #fafafb;
     margin: 0 -36px;
     padding-left: 36px;
     padding-right: 36px;
   }
   .inv-label {
     font-size: 15px;
-    color: #1e293b;
+    color: #17191c;
   }
   .inv-itemsub {
     font-size: 11px;
-    color: #94a3b8;
+    color: #a3a6af;
     margin-top: 3px;
   }
   .inv-amt {
     font-size: 15px;
-    font-weight: 600;
-    color: #1e293b;
+    font-weight: 500;
+    color: #17191c;
     white-space: nowrap;
   }
   .inv-total {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #0f172a;
-    color: #ffffff;
-    border-radius: 8px;
-    padding: 18px 24px;
-    margin-top: 22px;
+    background: #fbe1d1;
+    color: #5d2a1a;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 24px;
   }
   .inv-total-lbl {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #93b4fd;
+    color: #5d2a1a;
   }
   .inv-total-amt {
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 600;
+    color: #5d2a1a;
   }
   .inv-note {
     margin-top: 16px;
-    background: #eff5ff;
-    border-left: 3px solid #2563eb;
-    border-radius: 0 6px 6px 0;
+    background: #f2f2f3;
+    border-left: 3px solid #17191c;
+    border-radius: 0 8px 8px 0;
     padding: 12px 16px;
     font-size: 12.5px;
-    color: #475569;
+    color: #57595f;
   }
   .inv-foot {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 22px;
+    margin-top: 24px;
     padding: 16px 0 24px;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid #ececec;
   }
   .inv-foot-brand {
     font-size: 14px;
-    font-weight: 800;
-    color: #0f172a;
+    font-weight: 600;
+    color: #17191c;
   }
   .inv-foot-note {
     font-size: 11px;
-    color: #94a3b8;
+    color: #a3a6af;
   }
   /* Ledger signature: figures and meter readings use tabular lining numerals. */
   .inv-amt,

@@ -29,17 +29,17 @@
 
       <main class="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6">
         {#if store.error}
-          <div class="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700" role="alert">
+          <div class="mb-4 rounded-2xl bg-brand-100 px-4 py-3 text-sm font-medium text-brand-800" role="alert">
             {store.error}
           </div>
         {/if}
         {#if store.warning}
-          <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700" role="status">
+          <div class="mb-4 rounded-2xl bg-peach-50 px-4 py-3 text-sm font-medium text-sienna" role="status">
             ⚠ {store.warning}
           </div>
         {/if}
         {#if store.flash && !store.error}
-          <div class="mb-4 rounded-lg border border-accent-200 bg-accent-50 px-4 py-3 text-sm font-medium text-accent-700" role="status">
+          <div class="mb-4 rounded-2xl bg-brand-100 px-4 py-3 text-sm font-medium text-brand-800" role="status">
             {store.flash}
           </div>
         {/if}
@@ -60,18 +60,18 @@
       <div class="card w-full max-w-md p-8 text-center">
         <div class="brandmark mx-auto">K</div>
         {#if store.busy}
-          <h1 class="mt-5 text-h4 font-bold tracking-tight text-brand-900">Opening your dashboard…</h1>
+          <h1 class="mt-5 font-display text-h4 tracking-tight text-brand-800">Opening your dashboard…</h1>
           <p class="mt-2 text-sm text-brand-400">Reconnecting to your Google Sheet.</p>
         {:else}
-          <h1 class="mt-5 text-h4 font-bold tracking-tight text-brand-900">Sign in to open your dashboard</h1>
-          <p class="mt-2 text-sm text-brand-500">Sign in with Google and pick your rent spreadsheet — it opens right here.</p>
+          <h1 class="mt-5 font-display text-h4 tracking-tight text-brand-800">Sign in to open your dashboard</h1>
+          <p class="mt-2 text-[15px] text-brand-500">Sign in with Google and pick your rent spreadsheet — it opens right here.</p>
           <div class="mt-6 flex justify-center">
             <GoogleButton onclick={connect} busy={store.busy} />
           </div>
           {#if store.error}
-            <div class="mt-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">{store.error}</div>
+            <div class="mt-4 rounded-2xl bg-brand-100 px-3 py-2 text-sm font-medium text-brand-800">{store.error}</div>
           {/if}
-          <button class="mt-5 text-sm font-medium text-brand-400 hover:text-brand-600" onclick={() => router.go('landing')}>← Back to home</button>
+          <button class="mt-5 text-sm font-medium text-brand-400 hover:text-brand-800" onclick={() => router.go('landing')}>← Back to home</button>
         {/if}
       </div>
     </div>

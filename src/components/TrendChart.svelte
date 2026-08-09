@@ -9,8 +9,8 @@
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     const grad = ctx.createLinearGradient(0, 0, 0, 130)
-    grad.addColorStop(0, 'rgba(37,99,235,0.20)')
-    grad.addColorStop(1, 'rgba(37,99,235,0)')
+    grad.addColorStop(0, 'rgba(251,225,209,0.85)')
+    grad.addColorStop(1, 'rgba(251,225,209,0)')
 
     const chart = new Chart(ctx, {
       type: 'line',
@@ -18,14 +18,14 @@
         labels: [...labels],
         datasets: [{
           data: [...values],
-          borderColor: '#2563eb',
+          borderColor: '#5d2a1a',
           backgroundColor: grad,
           fill: true,
           tension: 0.38,
-          borderWidth: 2.5,
+          borderWidth: 2,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#2563eb',
+          pointHoverBackgroundColor: '#5d2a1a',
           pointHoverBorderColor: '#fff',
           pointHoverBorderWidth: 2,
         }],
@@ -38,7 +38,7 @@
           legend: { display: false },
           tooltip: {
             displayColors: false,
-            backgroundColor: '#0f172a',
+            backgroundColor: '#17191c',
             padding: 10,
             cornerRadius: 8,
             callbacks: { label: (c) => 'Rs ' + c.parsed.y.toLocaleString() },

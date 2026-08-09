@@ -5,10 +5,10 @@
 <button
   {onclick}
   disabled={busy}
-  class="btn w-full min-w-[248px] border border-slate-200 bg-white text-[15px] text-slate-700 shadow-[var(--shadow-soft)] hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
+  class="btn w-full min-w-[248px] border border-brand-300 bg-white text-[15px] text-brand-800 hover:border-brand-800 hover:bg-brand-100/60 sm:w-auto"
 >
   {#if busy}
-    <span class="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-500"></span>
+    <span class="h-5 w-5 animate-spin rounded-full border-2 border-brand-300 border-t-brand-800"></span>
     Opening…
   {:else}
     <svg viewBox="0 0 48 48" class="h-5 w-5" aria-hidden="true">

@@ -56,7 +56,7 @@
   <td class="px-3 py-2 text-right whitespace-nowrap">
     <button class="text-[13px] font-semibold text-accent-600 hover:text-accent-700 hover:underline" onclick={() => store.openInvoice(row.date)}>Invoice</button>
     <button
-      class="ml-3 align-middle text-brand-200 opacity-0 transition hover:text-rose-500 group-hover:opacity-100"
+      class="ml-3 align-middle text-brand-300 opacity-0 transition hover:text-brand-800 group-hover:opacity-100"
       title="Delete this month"
       aria-label="Delete this month"
       onclick={() => store.askDelete(row.rowNum)}

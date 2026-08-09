@@ -13,8 +13,8 @@
         labels: [...labels],
         datasets: [{
           data: [...values],
-          backgroundColor: '#bfd3fe',
-          hoverBackgroundColor: '#2563eb',
+          backgroundColor: '#fbe1d1',
+          hoverBackgroundColor: '#5d2a1a',
           borderRadius: 4,
           maxBarThickness: 22,
         }],
@@ -27,14 +27,14 @@
           legend: { display: false },
           tooltip: {
             displayColors: false,
-            backgroundColor: '#0f172a',
+            backgroundColor: '#17191c',
             padding: 9,
             cornerRadius: 8,
             callbacks: { label: (c) => `${c.parsed.y} units` },
           },
         },
         scales: {
-          x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#94a3b8', maxRotation: 0, autoSkipPadding: 8 } },
+          x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 10 }, color: '#a3a6af', maxRotation: 0, autoSkipPadding: 8 } },
           y: { display: false, beginAtZero: true, grace: '10%' },
         },
       },

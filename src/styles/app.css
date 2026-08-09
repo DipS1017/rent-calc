@@ -1,52 +1,68 @@
 @import 'tailwindcss';
 
-/* ─────────────────────  Kirayaa design system — "Console"  ───────────────────
-   Clean corporate SaaS dashboard. Inter throughout, slate ink, one confident
-   royal-blue primary, soft pastel status chips, white cards on a pale lavender
-   canvas. Dense, tidy tables with hairline row dividers. No ornament. */
+/* ─────────────────────  Kirayaa design system — "Steep"  ─────────────────────
+   Serif analytics on warm paper. Editorial: Source Serif 4 headlines at weight 400
+   float over a near-monochrome canvas; Inter does the UI work. The system is ~97%
+   achromatic — ink black is the only action colour — with a single rationed warm
+   peach accent (#fbe1d1 / sienna #5d2a1a) for editorial punctuation. Flat 24px
+   cards, pill buttons, hairline separation, barely-there shadow. */
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: 'Inter', ui-sans-serif, system-ui, sans-serif; /* figures: rely on tabular-nums */
-  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Source Serif 4', 'Source Serif Pro', ui-serif, Georgia, 'Times New Roman', serif;
 
-  /* Type scale — base 16px, ratio 1.25 (major third). */
-  --text-micro: 0.6875rem;  /*   11px — uppercase column heads, eyebrows */
-  --text-mini: 0.8125rem;   /*   13px — captions, meta */
-  --text-base: 1rem;        /*   16px — body */
-  --text-h5: 1.25rem;       /*   20px */
-  --text-h4: 1.5rem;        /*   24px */
-  --text-h3: 1.875rem;      /*   30px */
-  --text-h2: 2.25rem;       /*   36px */
-  --text-h1: 2.75rem;       /*   44px — hero figures */
-  --text-display: 3.25rem;  /*   52px — hero headline */
+  /* Editorial type scale (Steep). Serif headings stay at weight 400. */
+  --text-caption: 0.9375rem; /* 15px */
+  --text-body: 1.0625rem;    /* 17px */
+  --text-body-lg: 1.25rem;   /* 20px */
+  --text-subheading: 1.375rem; /* 22px */
+  --text-heading-sm: 1.625rem; /* 26px */
+  --text-heading: 2.75rem;   /* 44px */
+  --text-heading-lg: 4rem;   /* 64px */
+  --text-display: 5rem;      /* 80px hero */
+  /* aliases kept so existing utilities resolve, mapped onto the Steep scale */
+  --text-micro: 0.6875rem;   /* 11px labels */
+  --text-mini: 0.8125rem;    /* 13px */
+  --text-h5: 1.375rem;       /* 22px */
+  --text-h4: 1.625rem;       /* 26px — serif section headings */
+  --text-h3: 1.875rem;       /* 30px */
+  --text-h2: 2.75rem;        /* 44px */
+  --text-h1: 4rem;           /* 64px */
 
-  /* brand ramp = slate (corporate neutrals) — text, borders, header bands. */
-  --color-brand-50: #f8fafc;
-  --color-brand-100: #f1f5f9;
-  --color-brand-200: #e2e8f0;
-  --color-brand-300: #cbd5e1;
-  --color-brand-400: #94a3b8;
-  --color-brand-500: #64748b;
-  --color-brand-600: #475569;
-  --color-brand-700: #334155;
-  --color-brand-800: #1e293b;
-  --color-brand-900: #0f172a;
+  /* brand ramp = achromatic neutrals (text, surfaces, hairlines). 800 = ink. */
+  --color-brand-50: #fafafb;
+  --color-brand-100: #f2f2f3;
+  --color-brand-200: #ececec;
+  --color-brand-300: #d8d8da;
+  --color-brand-400: #a3a6af; /* smoke — placeholder */
+  --color-brand-500: #777b86; /* slate — muted text / links */
+  --color-brand-600: #57595f;
+  --color-brand-700: #3a3c42;
+  --color-brand-800: #17191c; /* ink — primary text + action */
+  --color-brand-900: #0d0e10;
 
-  /* accent = royal blue — the primary. Buttons, links, active states, logo. */
-  --color-accent-50: #eff5ff;
-  --color-accent-100: #dbe7fe;
-  --color-accent-200: #bfd3fe;
-  --color-accent-300: #93b4fd;
-  --color-accent-400: #6090fa;
-  --color-accent-500: #3b6cf6;
-  --color-accent-600: #2563eb;
-  --color-accent-700: #1d4ed8;
-  --color-accent-800: #1e40af;
-  --color-accent-900: #1e3a8a;
+  /* accent = ink black — the ONLY action colour (buttons, links, logo, selected).
+     Kept as a ramp so existing accent-* utilities resolve to ink, not colour. */
+  --color-accent-50: #f2f2f3;
+  --color-accent-100: #e6e6e7;
+  --color-accent-200: #d1d1d3;
+  --color-accent-300: #a3a6af;
+  --color-accent-400: #4a4c52;
+  --color-accent-500: #2a2c30;
+  --color-accent-600: #17191c;
+  --color-accent-700: #0d0e10;
+  --color-accent-800: #08090a;
+  --color-accent-900: #000000;
 
-  /* Flat: borderless cards separated by only a faint shadow. */
-  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.03);
+  /* peach = the single warm accent, rationed to one editorial element per view */
+  --color-peach-50: #fef6f0;
+  --color-peach-100: #fbe1d1;
+  --color-peach-200: #f4c9ac;
+  --color-sienna: #5d2a1a; /* ink-on-peach + chart strokes */
+
+  /* barely-there elevation: a hairline ring + faint shadow, nothing heavy */
+  --shadow-soft: 0 0 0 1px rgb(23 25 28 / 0.04), 0 1px 2px rgb(0 0 0 / 0.03);
   --shadow-glow: none;
 }
 
@@ -58,8 +74,8 @@
     height: 100%;
     margin: 0;
     font-family: var(--font-sans);
-    color: var(--color-brand-800); /* slate ink */
-    background: #eef1fb; /* pale lavender-blue canvas */
+    color: var(--color-brand-800); /* ink */
+    background: #fafafb; /* fog canvas */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizelegibility;
   }
@@ -68,88 +84,93 @@
   }
 }
 
-/* base button as a real utility so variants can @apply it (Tailwind v4 rule) */
+/* base button as a real utility so variants can @apply it (Tailwind v4 rule).
+   Steep buttons are fully-rounded pills. */
 @utility btn {
-  @apply inline-flex select-none items-center justify-center gap-2 rounded-md px-4 py-2
-         text-sm font-semibold transition active:scale-[.99] disabled:pointer-events-none
+  @apply inline-flex select-none items-center justify-center gap-2 rounded-full px-5 py-2
+         text-sm font-medium transition active:scale-[.99] disabled:pointer-events-none
          disabled:opacity-55 focus-visible:outline-none focus-visible:ring-2
-         focus-visible:ring-brand-500/50 focus-visible:ring-offset-2;
+         focus-visible:ring-brand-800/25 focus-visible:ring-offset-2;
 }
 
 @layer components {
+  /* ink monogram — the quiet logo mark */
   .brandmark {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-[18px] font-bold leading-none text-white;
-    background-color: var(--color-accent-600);
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-xl text-[19px] leading-none text-white;
+    font-family: var(--font-display);
+    background-color: var(--color-brand-800);
   }
   .brand-gradient-text {
-    color: var(--color-accent-600);
+    color: var(--color-brand-800);
   }
 
+  /* filled ink pill — the one primary action */
   .btn-primary {
     @apply btn text-white;
-    background-color: var(--color-accent-600);
+    background-color: var(--color-brand-800);
   }
   .btn-primary:hover {
-    background-color: var(--color-accent-700);
+    background-color: var(--color-brand-900);
   }
+  /* ghost pill — matched secondary */
   .btn-ghost {
-    @apply btn border border-brand-200 bg-white text-brand-700 hover:border-brand-300 hover:bg-brand-50;
+    @apply btn border border-brand-300 bg-transparent text-brand-800 hover:border-brand-800 hover:bg-brand-100/60;
   }
   .btn-sm {
-    @apply px-3 py-1.5 text-[13px] rounded-lg;
+    @apply px-4 py-1.5 text-[13px] rounded-full;
   }
 
-  /* sticky table column head — pale slate band, muted uppercase labels */
+  /* table column head — quiet uppercase labels on a hairline */
   .th {
-    @apply sticky top-0 z-10 border-b border-brand-200 bg-brand-50 px-3 py-2.5
-           text-[11px] font-semibold uppercase tracking-wide text-brand-500;
+    @apply sticky top-0 z-10 border-b border-brand-200 bg-white px-3 py-2.5
+           text-[11px] font-medium uppercase tracking-[0.06em] text-brand-400;
   }
 
+  /* flat editorial card — 24px radius, no border, whisper of shadow */
   .card {
-    @apply rounded-xl bg-white shadow-[var(--shadow-soft)];
+    @apply rounded-3xl bg-white shadow-[var(--shadow-soft)];
   }
 
-  /* editable cell — bigger text, tighter rows; blue ring signals it's editable */
+  /* editable cell — an ink ring signals it's editable */
   .cell {
     @apply w-full cursor-text bg-transparent px-3 py-1.5 text-[14px] text-brand-800 outline-none
            transition placeholder:text-brand-300;
   }
   .cell:hover {
-    @apply rounded-md bg-accent-50/70 ring-1 ring-inset ring-accent-200;
+    @apply rounded-lg bg-brand-100/70 ring-1 ring-inset ring-brand-200;
   }
   .cell:focus {
-    @apply rounded-md bg-white ring-2 ring-inset ring-accent-500;
+    @apply rounded-lg bg-white ring-2 ring-inset ring-brand-800;
   }
   .cell-num {
     @apply text-right font-mono text-[14px] tabular-nums;
   }
 
-  /* auto-calculated (read-only) cell — visibly not editable */
+  /* auto-calculated (read-only) cell */
   .auto-cell {
-    @apply cursor-default select-none bg-brand-50/60 px-3 py-1.5 text-right align-middle font-mono text-[14px] tabular-nums;
+    @apply cursor-default select-none bg-brand-50 px-3 py-1.5 text-right align-middle font-mono text-[14px] tabular-nums;
   }
-  /* "auto" chip shown in the header of calculated columns */
   .auto-tag {
-    @apply ml-1 inline-block rounded bg-brand-100 px-1 py-px align-[1px] text-[9px] font-bold normal-case tracking-normal text-brand-600;
+    @apply ml-1 inline-block rounded bg-brand-100 px-1 py-px align-[1px] text-[9px] font-semibold normal-case tracking-normal text-brand-500;
   }
 
   /* spreadsheet gridlines */
   .sheet-grid th,
   .sheet-grid td {
-    border-right: 1px solid var(--color-slate-100);
+    border-right: 1px solid var(--color-brand-100);
   }
   .sheet-grid th:last-child,
   .sheet-grid td:last-child {
     border-right: 0;
   }
 
-  /* saved pulse on a just-written row */
+  /* saved pulse on a just-written row (warm peach flash) */
   .saved-pulse {
     animation: savedPulse 0.9s ease-out;
   }
   @keyframes savedPulse {
     0% {
-      background-color: rgb(16 185 129 / 0.16);
+      background-color: rgb(251 225 209 / 0.6);
     }
     100% {
       background-color: transparent;
@@ -158,14 +179,14 @@
 
   .scrollbar-slim {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-slate-300) transparent;
+    scrollbar-color: var(--color-brand-300) transparent;
   }
   .scrollbar-slim::-webkit-scrollbar {
     height: 9px;
     width: 9px;
   }
   .scrollbar-slim::-webkit-scrollbar-thumb {
-    background: var(--color-slate-300);
+    background: var(--color-brand-300);
     border-radius: 9999px;
   }
 }
