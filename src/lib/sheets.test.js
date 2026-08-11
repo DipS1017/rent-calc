@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { parseRow, rowValues, extractSheetID } from './sheets.js'
 
 describe('parseRow', () => {
-  it('parses a 12-column data row and strips the leading apostrophe', () => {
+  it('parses a data row and strips the leading apostrophe', () => {
     const cells = ["'2081/12/1", '1000', '100', '50', '200', '500', '520', '20', '300', '0', '1650', 'note']
     expect(parseRow(cells, 13)).toMatchObject({
       date: '2081/12/1',
@@ -59,7 +59,7 @@ describe('rowValues', () => {
       totalDue: 15800,
       note: '',
     })
-    expect(cells).toEqual(["'2082/1/1", 15000, 500, 300, '', 1605, '', '', '', '', 15800, ''])
+    expect(cells).toEqual(["'2082/1/1", 15000, 500, 300, '', 1605, '', '', '', '', 15800, '', 15])
   })
 })
 

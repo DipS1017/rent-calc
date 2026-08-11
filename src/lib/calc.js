@@ -1,6 +1,6 @@
-// Pure bill math for the 12-column schema (A..L):
+// Pure bill math for the 13-column schema (A..M):
 //   Date, Rent, Water, Garbage, Internet, Prev Meter, Curr Meter, Units,
-//   Electricity, Outstanding, Total Due, Note.
+//   Electricity, Outstanding, Total Due, Note, Rate.
 // A "row" is the camelCase shape used across the app:
 //   { date, rent, water, garbage, internet, prevMeter, currMeter, units,
 //     electricity, outstanding, totalDue, note, rowNum, raw }
@@ -16,6 +16,12 @@ export function computeTotals(rent, water, garbage, internet, prevMeter, currMet
   const electricity = units * unitRate
   const totalDue = rent + water + garbage + internet + electricity + outstanding
   return { units, electricity, totalDue }
+}
+
+// deriveRate is the current default rate — the Rate column of the most recent month.
+// Returns 0 when there are no rows (caller falls back to 15).
+export function deriveRate(rows) {
+  return rows.length ? rows[rows.length - 1].rate : 0
 }
 
 // billOf is the amount owed for a row — now just the single Total Due.

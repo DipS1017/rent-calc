@@ -2,13 +2,13 @@
 // Google Sheets directly, and applies edits optimistically — the UI updates instantly
 // and the sheet write happens in the background — which is what makes it feel fast.
 //
-// 12-column schema (A..L): Date, Rent, Water, Garbage, Internet, Prev Meter, Curr Meter,
-// Units, Electricity, Outstanding, Total Due, Note.
+// 13-column schema (A..M): Date, Rent, Water, Garbage, Internet, Prev Meter, Curr Meter,
+// Units, Electricity, Outstanding, Total Due, Note, Rate (Rs/unit; blank = 15).
 import { loadConfig, saveConfig, clientId, apiKey, appId } from './config.js'
 import { createAuth } from './auth.js'
 import { createSheets, extractSheetID } from './sheets.js'
 import { pickSpreadsheet } from './picker.js'
-import { computeTotals } from './calc.js'
+import { computeTotals, deriveRate } from './calc.js'
 import { shortDate, parse as parseBS, nextMonth, format as fmtBS } from './nepali.js'
 import { buildInvoice } from './invoice.js'
 
@@ -44,7 +44,7 @@ export class Store {
   sheetUrl = $state('')
   sheetId = ''
   sheetName = $state('')
-  unitRate = 15
+  unitRate = $state(15) // electricity rate/unit; seeded from the sheet's own data on load
   titles = {}
   lastTab = ''
 
@@ -66,6 +66,7 @@ export class Store {
   saving = $state(0)
   invoiceDate = $state(null)
   pendingDelete = $state(null) // rowNum awaiting delete confirmation
+  pendingRate = $state(null) // new rate awaiting "this month vs whole sheet" choice
 
   #tempNum = -1
   #flashTimer = null
@@ -91,6 +92,7 @@ export class Store {
     // The tab name is the tenant name (sheets no longer have a title row).
     return this.titles?.[this.tab] || this.tab
   }
+
 
   get invoice() {
     if (!this.invoiceDate) return null
@@ -285,6 +287,8 @@ export class Store {
         ? `${unrecognized.length} row${unrecognized.length === 1 ? '' : 's'} have a date I couldn't read as a B.S. date (shown as-is — e.g. “${unrecognized[0]}”), so they may sort oddly. Tip: set the Date column to Plain text in Google Sheets.`
         : ''
       this.rows = sortByDate(rows)
+      const r = deriveRate(this.rows) // adopt the rate the sheet was last billed at
+      if (r > 0) this.unitRate = r
     } finally {
       if (this.tab === tab) this.loading = false
     }
@@ -350,6 +354,34 @@ export class Store {
 
   // ── row edits ──
 
+  // Changing the rate opens a dialog asking how far to apply it.
+  askRate(v) {
+    const n = Math.trunc(Number(v))
+    if (!Number.isFinite(n) || n <= 0 || n === this.unitRate) return
+    this.pendingRate = n
+  }
+  cancelRate() {
+    this.pendingRate = null
+  }
+  // applyRate re-bills either just the current month or every month at the pending rate.
+  applyRate(scope = 'current') {
+    const n = this.pendingRate
+    this.pendingRate = null
+    if (n == null) return
+    this.unitRate = n
+    this.#save()
+    // 'all' re-bills every month; otherwise just the most recent month that has a bill.
+    const lastBilled = [...this.rows].reverse().find((r) => r.units > 0)
+    const rows = scope === 'all' ? [...this.rows] : lastBilled ? [lastBilled] : []
+    for (const r of rows) {
+      this.saveRow(r.rowNum, {
+        date: r.date, rent: r.rent, water: r.water, garbage: r.garbage,
+        internet: r.internet, prevMeter: r.prevMeter, currMeter: r.currMeter,
+        outstanding: r.outstanding, note: r.note, rate: n,
+      })
+    }
+  }
+
   saveRow(rowNum, input) {
     const idx = this.rows.findIndex((r) => r.rowNum === rowNum)
     if (idx < 0) return
@@ -368,12 +400,13 @@ export class Store {
     const prevMeter = toInt(input.prevMeter)
     const currMeter = toInt(input.currMeter)
     const outstanding = toInt(input.outstanding)
+    const rate = toInt(input.rate) || 15 // per-row Rate column; blank → 15
     const { units, electricity, totalDue } = computeTotals(
-      rent, water, garbage, internet, prevMeter, currMeter, this.unitRate, outstanding,
+      rent, water, garbage, internet, prevMeter, currMeter, rate, outstanding,
     )
     const row = {
       date, rent, water, garbage, internet, prevMeter, currMeter,
-      units, electricity, outstanding, totalDue,
+      units, electricity, outstanding, totalDue, rate,
       note: String(input.note ?? '').trim(), rowNum,
     }
     const next = this.rows.slice()
@@ -407,7 +440,7 @@ export class Store {
     const tempNum = this.#tempNum--
     const row = {
       date, rent, water, garbage, internet, prevMeter, currMeter: 0,
-      units, electricity, outstanding: 0, totalDue, note: '', rowNum: tempNum,
+      units, electricity, outstanding: 0, totalDue, rate: this.unitRate, note: '', rowNum: tempNum,
     }
     this.rows = sortByDate([...this.rows, row])
     this.#setFlash(

@@ -14,22 +14,31 @@
   let prevMeter = $state(row.prevMeter ? String(row.prevMeter) : '')
   let currMeter = $state(row.currMeter ? String(row.currMeter) : '')
   let outstanding = $state(row.outstanding ? String(row.outstanding) : '')
+  // svelte-ignore state_referenced_locally
+  let rate = $state(String(row.rate))
   let note = $state(row.note)
 
   let pulse = $state(false)
 
+  // Keep the Rate cell in sync when the row's rate changes externally (a "re-bill every month").
+  $effect(() => { rate = String(row.rate) })
+
   function commit() {
-    store.saveRow(row.rowNum, { date, rent, water, garbage, internet, prevMeter, currMeter, outstanding, note })
+    store.saveRow(row.rowNum, { date, rent, water, garbage, internet, prevMeter, currMeter, rate, outstanding, note })
     pulse = false
     requestAnimationFrame(() => { pulse = true })
   }
 
   const num = 'cell cell-num'
   const ro = 'auto-cell' // read-only, calculated cell
+
+  // Warm-tint a month priced at a rate other than the current default.
+  let rateOff = $derived(row.rate !== store.unitRate)
 </script>
 
 <tr
-  class="group border-b border-brand-100 last:border-0 hover:bg-brand-50/70 {pulse ? 'saved-pulse' : ''}"
+  class="group border-b border-brand-100 last:border-0 hover:bg-brand-50/70 {pulse ? 'saved-pulse' : ''} {rateOff ? 'bg-peach-50' : ''}"
+  title={rateOff ? `Priced at Rs ${row.rate}/unit — differs from the current Rs ${store.unitRate}` : undefined}
   onanimationend={() => (pulse = false)}
 >
   <td class="w-[112px] p-0"><input class="cell font-mono text-[14px]" bind:value={date} onchange={commit} aria-label="Date" /></td>
@@ -45,6 +54,7 @@
       <span class="inline-flex rounded-full bg-accent-50 px-2 py-0.5 font-mono text-[12px] font-semibold text-accent-700 tabular-nums">+{row.units}</span>
     {:else}<span class="text-brand-200">—</span>{/if}
   </td>
+  <td class="p-0"><input class={num} bind:value={rate} onchange={commit} inputmode="numeric" aria-label="Electricity rate per unit" /></td>
   <td class="{ro} text-brand-400">{row.electricity || '—'}</td>
   <td class="p-0"><input class={num} bind:value={outstanding} onchange={commit} inputmode="numeric" placeholder="—" aria-label="Outstanding" /></td>
   <td class="{ro} font-bold text-brand-900">{money(row.totalDue)}</td>

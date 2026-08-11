@@ -3,7 +3,7 @@
 // html2canvas and jsPDF are imported lazily (only when the user exports), so the ~600 KB
 // they add stays out of the initial page load.
 
-// buildInvoice assembles the invoice for rows[idx]. With the 12-column schema each row is
+// buildInvoice assembles the invoice for rows[idx]. With the self-contained row schema each row is
 // self-contained (prev + curr meter, a single total due), so no cross-row lookups.
 export function buildInvoice(rows, idx, { title, unitRate }) {
   const row = rows[idx]
@@ -17,7 +17,7 @@ export function buildInvoice(rows, idx, { title, unitRate }) {
     prevMeter: row.prevMeter,
     currMeter: row.currMeter,
     units: row.units,
-    unitRate,
+    unitRate: row.rate ?? unitRate, // the rate this month was actually priced at
     electricity: row.electricity,
     outstanding: row.outstanding,
     totalDue: row.totalDue,

@@ -12,10 +12,11 @@
     ['F', 'Prev Meter', 'you type', "Last month's electricity reading"],
     ['G', 'Curr Meter', 'you type', "This month's electricity reading"],
     ['H', 'Units', 'auto', 'Curr − Prev'],
-    ['I', 'Electricity', 'auto', 'Units × rate (default Rs. 15)'],
+    ['I', 'Electricity', 'auto', 'Units × Rate'],
     ['J', 'Outstanding', 'you type', 'Unpaid balance carried in — blank if none'],
     ['K', 'Total Due', 'auto', 'Rent + Water + Garbage + Internet + Electricity + Outstanding'],
     ['L', 'Note', 'text', 'Free-text — also printed on the invoice'],
+    ['M', 'Rate', 'you type', 'Electricity rate per unit — blank = Rs 15'],
   ]
 
   // Sample register page (mock data) — the hero shows the actual artifact this tool keeps.
@@ -44,8 +45,6 @@
       </div>
       {#if store.connected}
         <button class="btn-primary btn-sm" onclick={onDashboard}>Open dashboard →</button>
-      {:else}
-        <a href="#start" class="btn-ghost btn-sm">Sign in</a>
       {/if}
     </div>
   </header>
@@ -144,7 +143,7 @@
     <div use:reveal class="card p-8 sm:p-10">
       <h2 class="font-display text-h4 tracking-tight text-brand-800">What your sheet holds</h2>
       <p class="mt-2 text-[15px] text-brand-500">
-        Kirayaa reads a tab per tenant with these columns in order (A→L). The <span class="font-medium text-brand-700">auto</span> columns are computed for you.
+        Kirayaa reads a tab per tenant with these columns in order (A→M). The <span class="font-medium text-brand-700">auto</span> columns are computed for you.
       </p>
       <div class="mt-6 overflow-x-auto scrollbar-slim">
         <table class="w-full text-left text-[14px]">
@@ -175,7 +174,7 @@
         </summary>
         <ul class="mt-3 space-y-1.5 text-[15px] text-brand-500">
           <li>• <b class="font-medium text-brand-700">Units used</b> = current meter − previous month's meter (never negative).</li>
-          <li>• <b class="font-medium text-brand-700">Electricity</b> = units × rate (default Rs. 15/unit).</li>
+          <li>• <b class="font-medium text-brand-700">Electricity</b> = units × the Rate column (col M; blank = Rs 15/unit).</li>
           <li>• <b class="font-medium text-brand-700">Total Due</b> = Rent + Water + Garbage + Internet + Electricity + Outstanding.</li>
           <li>• <b class="font-medium text-brand-700">Internet</b> is added only for tenants who actually pay it.</li>
           <li>• <b class="font-medium text-brand-700">Outstanding</b> carries an unpaid balance onto the invoice's Total Due.</li>

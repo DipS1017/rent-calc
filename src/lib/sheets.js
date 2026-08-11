@@ -1,12 +1,13 @@
 // Google Sheets REST client used directly from the browser (no server), plus the
-// row parse/serialize helpers for the 12-column schema.
+// row parse/serialize helpers for the 13-column schema.
 //
-// Column layout A..L: Date, Rent, Water, Garbage, Internet, Prev Meter, Curr Meter,
-// Units, Electricity, Outstanding, Total Due, Note.
+// Column layout A..M: Date, Rent, Water, Garbage, Internet, Prev Meter, Curr Meter,
+// Units, Electricity, Outstanding, Total Due, Note, Rate (Rs/unit; blank = 15).
 
 const API = 'https://sheets.googleapis.com/v4/spreadsheets'
-const RANGE = 'A:L'
-const NCOLS = 12
+const RANGE = 'A:M'
+const NCOLS = 13
+const DEFAULT_RATE = 15
 
 // normalizeBSDate recognises a B.S. date even if Google Sheets reformatted it into a real
 // date. We store "YYYY/M/D" (as text); if the sheet turned it into a Gregorian date it
@@ -73,12 +74,13 @@ export function parseRow(cells, rowNum = 0) {
     outstanding: toInt(raw[9]),
     totalDue: toInt(raw[10]),
     note: raw[11],
+    rate: toInt(raw[12]) || DEFAULT_RATE, // blank/0 → default 15
     rowNum,
     raw,
   }
 }
 
-// rowValues renders a row into the A..L cells written to Sheets. The date is
+// rowValues renders a row into the A..M cells written to Sheets. The date is
 // apostrophe-prefixed so Sheets keeps it as text; zero optionals are written blank.
 export function rowValues(r) {
   const blank = (n) => (n === 0 ? '' : n)
@@ -95,6 +97,7 @@ export function rowValues(r) {
     blank(r.outstanding),
     r.totalDue,
     r.note ?? '',
+    r.rate || DEFAULT_RATE,
   ]
 }
 
@@ -227,7 +230,7 @@ export function createSheets(getAccessToken) {
 
     async updateRow(sheetId, tab, rowNum, r) {
       if (rowNum < 1) throw new Error(`invalid row number ${rowNum}`)
-      await call(rangePath(sheetId, `${quoteTab(tab)}!A${rowNum}:L${rowNum}`), {
+      await call(rangePath(sheetId, `${quoteTab(tab)}!A${rowNum}:M${rowNum}`), {
         method: 'PUT',
         params: [['valueInputOption', 'USER_ENTERED']],
         body: { values: [rowValues(r)] },

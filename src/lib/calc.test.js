@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { computeTotals, billOf, money } from './calc.js'
+import { computeTotals, billOf, money, deriveRate } from './calc.js'
+
+describe('deriveRate', () => {
+  it('is the latest row rate, 0 when empty', () => {
+    expect(deriveRate([{ rate: 15 }, { rate: 20 }])).toBe(20)
+    expect(deriveRate([])).toBe(0)
+  })
+})
 
 describe('computeTotals', () => {
   it('derives units, electricity, and a single total due', () => {
