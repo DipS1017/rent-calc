@@ -35,7 +35,7 @@ It's built to open once a month, calculate rent, and send bills — fast.
 
 - 🔐 **Sign in with Google**, then pick your sheet from Drive's own file chooser — least-privilege `drive.file` scope means the app can only touch the one file you pick.
 - 📝 **Editable spreadsheet** — edits are *optimistic* (instant UI) and write through to Google Sheets in the background.
-- ⚡ **Electricity from the meter** — enter Prev/Curr readings; units, electricity, and the total recompute automatically.
+- ⚡ **Electricity from the meter** — enter Prev/Curr readings; units, electricity, and the total recompute automatically at each month's **Rate** (a per-row column, blank = Rs 15). Edit a month's Rate to reprice just it, or the whole sheet.
 - 📊 **Dense analytics** — this-month bill (with % change), an electricity **anomaly flag** (higher / typical / lower than the tenant's average), average monthly bill, total billed to date, and bill/units trend charts.
 - 🧾 **Invoices** — clean PNG/PDF per month, with the tenant's note included.
 - ➕ **Add month** (auto-filled from the previous month) · 🗑 **delete row** (with confirmation) · ✏️ **rename tab** — all write to the sheet.
@@ -58,7 +58,7 @@ It's built to open once a month, calculate rent, and send bills — fast.
 
 ## Sheet format
 
-One tab per tenant, columns in this order (**A → L**):
+One tab per tenant, columns in this order (**A → M**):
 
 | Col | Header | Filled by | Meaning |
 |-----|--------|-----------|---------|
@@ -70,10 +70,11 @@ One tab per tenant, columns in this order (**A → L**):
 | F | Prev Meter | you | Last month's electricity reading |
 | G | Curr Meter | you | This month's reading |
 | H | Units | **auto** | `Curr − Prev` |
-| I | Electricity | **auto** | `Units × rate` (default Rs. 15) |
+| I | Electricity | **auto** | `Units × Rate` |
 | J | Outstanding | you | Unpaid balance carried in — blank if none |
 | K | Total Due | **auto** | `Rent + Water + Garbage + Internet + Electricity + Outstanding` |
 | L | Note | text | Free-text — printed on the invoice |
+| M | Rate | you | Electricity rate per unit — **blank = Rs 15** |
 
 - The **auto** columns are computed and written back on save — you can leave them blank.
 - Each row is **self-contained** (stores both meters), so invoices don't depend on the row above.
