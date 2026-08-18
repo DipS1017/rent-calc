@@ -143,7 +143,9 @@
     @apply rounded-lg bg-white ring-2 ring-inset ring-brand-800;
   }
   .cell-num {
-    @apply text-right font-mono text-[14px] tabular-nums;
+    /* min-width so the column can't collapse to header width and clip the number
+       (inputs don't contribute their value width to table auto-layout). */
+    @apply text-right font-mono text-[14px] tabular-nums min-w-[80px];
   }
 
   /* auto-calculated (read-only) cell */

@@ -10,6 +10,13 @@
   let inv = $derived(store.invoice)
   let items = $derived(inv ? invoiceLineItems(inv) : [])
 
+  // The invoice stays a fixed 640px document (so PNG/PDF export is consistent). On narrow
+  // screens the on-screen preview is scaled to fit — offsetWidth/Height ignore CSS
+  // transforms, so the export is unaffected.
+  let wrapW = $state(0)
+  let natH = $state(0)
+  let scale = $derived(wrapW ? Math.min(1, wrapW / 640) : 1)
+
   async function save(kind) {
     if (!node) return
     downloading = true
@@ -38,9 +45,12 @@
         <button class="btn-ghost btn-sm" onclick={() => store.closeInvoice()}>Close</button>
       </div>
 
-      <div class="overflow-x-auto bg-brand-100 p-4 scrollbar-slim sm:p-6">
+      <div class="bg-brand-100 p-3 sm:p-6">
         <!-- Printable invoice: self-contained, hex colours only (html2canvas-safe). -->
-        <div class="invoice" bind:this={node}>
+        <div bind:clientWidth={wrapW}>
+          <div class="mx-auto overflow-hidden" style="width:{Math.round(640 * scale)}px; height:{natH ? Math.round(natH * scale) + 'px' : 'auto'}">
+            <div style="transform:scale({scale}); transform-origin:top left; width:640px">
+              <div class="invoice" bind:this={node} bind:clientHeight={natH}>
           <div class="inv-head">
             <div>
               <div class="inv-title">Invoice</div>
@@ -81,10 +91,13 @@
               <div class="inv-foot-note">Thank you for being a valued tenant.</div>
             </div>
           </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="flex justify-end gap-2.5 border-t border-brand-200 px-6 py-3.5">
+      <div class="flex flex-wrap justify-end gap-2.5 border-t border-brand-200 px-5 py-3.5 sm:px-6">
         <button class="btn-ghost btn-sm" onclick={() => save('png')} disabled={downloading}>Download PNG</button>
         <button class="btn-primary btn-sm" onclick={() => save('pdf')} disabled={downloading}>Download PDF</button>
       </div>

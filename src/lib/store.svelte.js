@@ -67,6 +67,7 @@ export class Store {
   invoiceDate = $state(null)
   pendingDelete = $state(null) // rowNum awaiting delete confirmation
   pendingRate = $state(null) // new rate awaiting "this month vs whole sheet" choice
+  editRow = $state(null) // rowNum being edited in the mobile detail sheet
 
   #tempNum = -1
   #flashTimer = null
@@ -103,6 +104,16 @@ export class Store {
 
   get pendingDeleteRow() {
     return this.pendingDelete == null ? null : this.rows.find((r) => r.rowNum === this.pendingDelete) || null
+  }
+
+  get editingRow() {
+    return this.editRow == null ? null : this.rows.find((r) => r.rowNum === this.editRow) || null
+  }
+  openEditor(rowNum) {
+    this.editRow = rowNum
+  }
+  closeEditor() {
+    this.editRow = null
   }
 
   // strip: per-tenant insight — this month vs usual, an electricity anomaly flag, trends,

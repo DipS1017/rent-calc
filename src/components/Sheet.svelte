@@ -1,5 +1,6 @@
 <script>
   import Row from './Row.svelte'
+  import RowEditor from './RowEditor.svelte'
   let { store } = $props()
 
   // Display newest month first. The underlying store.rows stays chronological (analytics,
@@ -57,6 +58,7 @@
     <table class="sheet-grid w-full border-separate border-spacing-0 text-[13.5px]">
       <thead>
         <tr>
+          <th class="th w-10 lg:hidden"></th>
           <th class="th w-[112px] text-left">Date</th>
           <th class="th text-right">Rent</th>
           <th class="th text-right">Water</th>
@@ -93,6 +95,10 @@
     </table>
   </div>
 </section>
+
+{#if store.editingRow}
+  <RowEditor {store} row={store.editingRow} />
+{/if}
 
 {#if store.pendingDeleteRow}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->

@@ -41,7 +41,12 @@
   title={rateOff ? `Priced at Rs ${row.rate}/unit — differs from the current Rs ${store.unitRate}` : undefined}
   onanimationend={() => (pulse = false)}
 >
-  <td class="w-[112px] p-0"><input class="cell font-mono text-[14px]" bind:value={date} onchange={commit} aria-label="Date" /></td>
+  <td class="w-10 p-0 lg:hidden">
+    <button class="flex h-full w-full items-center justify-center py-2 text-brand-400 transition hover:text-brand-900" onclick={() => store.openEditor(row.rowNum)} aria-label="Edit this month" title="Edit this month">
+      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+    </button>
+  </td>
+  <td class="p-0"><input class="cell min-w-[112px] font-mono text-[14px]" bind:value={date} onchange={commit} title={date} aria-label="Date" /></td>
   <td class="p-0"><input class={num} bind:value={rent} onchange={commit} inputmode="numeric" aria-label="Rent" /></td>
   <td class="p-0"><input class={num} bind:value={water} onchange={commit} inputmode="numeric" aria-label="Water" /></td>
   <td class="p-0"><input class={num} bind:value={garbage} onchange={commit} inputmode="numeric" aria-label="Garbage" /></td>
